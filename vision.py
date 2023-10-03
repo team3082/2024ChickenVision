@@ -39,9 +39,11 @@ def detect_cone():
     fontColor = (0, 0, 255)
     lineType = 2
 
-    if contours[1] != None:
+    if contours[0] != ():
         for cnt in contours:
-            approx = cv2.approxPolyDP(cnt, 0.09 * cv2.arcLength(cnt, True), True)
+            print(cnt)
+            # perim = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.09, True)
             
             if len(approx) == 3:
                 x, y, w, h = cv2.boundingRect(approx)
@@ -55,25 +57,9 @@ def detect_cone():
                     lineType)
                 cv2.drawContours(frame, [cnt], -1, (0, 255, 0), 2)
             
-def detect_apriltag():
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    tags = detector.detect(gray)
-
-    for tag in tags:
-        if tag.decision_margin >= 40:
-            corners = tag.corners.astype(int)
-
-            print(f"Tag ID: {tag.tag_id}")
-            print(f"Tag Center: {tag.center}")
-            print(f"Decision Margin: {tag.decision_margin}")
-
-            cv2.polylines(frame, [corners], isClosed=True, color=(0, 255, 0), thickness=2)
-            
 while True:
     ret, frame = cap.read()
     detect_cone()
-    detect_apriltag()
 
     cv2.imshow("Robot Vision", frame)
 
