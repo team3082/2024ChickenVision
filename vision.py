@@ -31,7 +31,7 @@ def detect_cone():
     # cv2.imshow("mask", smoothed_img)
     
     edges_img = cv2.Canny(smoothed_img, 100, 200)
-    contours = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cv2.imshow("edge", edges_img)
     
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -39,16 +39,17 @@ def detect_cone():
     fontColor = (0, 0, 255)
     lineType = 2
 
-    if contours[0] != ():
+    if contours != ():
         for cnt in contours:
-            print(cnt)
-            # perim = cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, 0.09, True)
-            
+            perim = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.09 * perim, True)
             if len(approx) == 3:
                 x, y, w, h = cv2.boundingRect(approx)
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
                 bottomLeftCornerOfText = (x, y)
+                center = (x + (w / 2), y + (h / 2))
+                area = w * h
+                print(center, area)
                 cv2.putText(frame,'traffic_cone', 
                     bottomLeftCornerOfText, 
                     font, 
