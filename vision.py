@@ -1,14 +1,13 @@
 import cv2
-from pupil_apriltags import Detector
 import numpy as np
+import apriltag
 
-detector = Detector(families="tag16h5", 
-                    nthreads=1,
-                    quad_decimate=1.0,
-                    quad_sigma=0.0,
-                    refine_edges=1,
-                    decode_sharpening=0.25
+options = apriltag.DetectorOptions(families="tag16h5", 
+                    nthreads=2,
+                    quad_decimate=1.0
                     )
+
+detector = apriltag.Detector(options)
 
 camera_index = 0
 cap = cv2.VideoCapture(camera_index)
@@ -39,22 +38,22 @@ def detect_cone():
     fontScale = 2
     fontColor = (0, 0, 255)
     lineType = 2
-    
-    for cnt in contours:
-        boundingRect = cv2.boundingRect(cnt)
-        approx = cv2.approxPolyDP(cnt, 0.09 * cv2.arcLength(cnt, True), True)
-        
-        if len(approx) == 3:
-            x, y, w, h = cv2.boundingRect(approx)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
-            bottomLeftCornerOfText = (x, y)
-            cv2.putText(frame,'traffic_cone', 
-                bottomLeftCornerOfText, 
-                font, 
-                fontScale,
-                fontColor,
-                lineType)
-            cv2.drawContours(frame, [cnt], -1, (0, 255, 0), 2)
+
+    if contours[1] != None:
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.09 * cv2.arcLength(cnt, True), True)
+            
+            if len(approx) == 3:
+                x, y, w, h = cv2.boundingRect(approx)
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+                bottomLeftCornerOfText = (x, y)
+                cv2.putText(frame,'traffic_cone', 
+                    bottomLeftCornerOfText, 
+                    font, 
+                    fontScale,
+                    fontColor,
+                    lineType)
+                cv2.drawContours(frame, [cnt], -1, (0, 255, 0), 2)
             
 def detect_apriltag():
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -62,14 +61,12 @@ def detect_apriltag():
     tags = detector.detect(gray)
 
     for tag in tags:
-        if tag.decision_margin >= 25:
+        if tag.decision_margin >= 40:
             corners = tag.corners.astype(int)
 
             print(f"Tag ID: {tag.tag_id}")
             print(f"Tag Center: {tag.center}")
-            print(f"Tag Rotation: {tag.pose_R}")
-            print(f"Tag Translation: {tag.pose_t}")
-            print(f"Tag Ambiguity; {tag.decision_margin}\n")
+            print(f"Decision Margin: {tag.decision_margin}")
 
             cv2.polylines(frame, [corners], isClosed=True, color=(0, 255, 0), thickness=2)
             
