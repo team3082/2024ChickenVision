@@ -18,31 +18,33 @@ class CameraCone(camera.Camera):
     def printConeData(self):
         # printing out data to console for debugging
         for cone in self.cones:
-            position = cone[0]
-            area = cone[1]
-            print(f"Position: ({position[0]}, {position[1]})")
-            print(f"Area: {area}")
+            if cone != None:
+                position = cone[0]
+                area = cone[1]
+                print(f"Position: ({position[0]}, {position[1]})")
+                print(f"Area: {area}")
 
     def detectCones(self):
         # resetting data from previous frame
-        self.cones = ()
-        index = 0
+        if len(self.contours) > 0:
+            self.cones = [None] * len(self.contours)
 
-        # looping over each contour
-        for cnt in self.contours:
-            # getting perimeter of object
-            perim = cv2.arcLength(cnt, True)
-            
-            # simplifying the vertices
-            approx = cv2.approxPolyDP(cnt, self.arbituaryValue * perim, True)
+            index = 0
+            # looping over each contour
+            for cnt in self.contours:
+                # getting perimeter of object
+                perim = cv2.arcLength(cnt, True)
 
-            # checking if its a triangle or has 3 vertices
-            if len(approx) == 3:
-                index += 1
-                x, y, w, h = cv2.boundingRect(approx)
-                center = (x + (w / 2), y + (h / 2))
-                area = w * h
-                self.cones[index] = (center, area, cnt, (x, y, w, h))                
+                # simplifying the vertices
+                approx = cv2.approxPolyDP(cnt, self.arbituaryValue * perim, True)
+
+                # checking if its a triangle or has 3 vertices
+                if len(approx) == 3:
+                    x, y, w, h = cv2.boundingRect(approx)
+                    center = (x + (w / 2), y + (h / 2))
+                    area = w * h
+                    self.cones[index] = [center, area, cnt, [x, y, w, h]] 
+                    index += 1
 
     def getContours(self):
         # detecting only specific colors
@@ -70,25 +72,26 @@ class CameraCone(camera.Camera):
     
         # rendering stuff for each cone detected
         for cone in self.cones:
-            contour = cone[2]
-            x, y, w, h = cone[3]
-            bottomLeftCornerOfText = (x, y)
-            cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
-            cv2.putText(self.frame,'traffic_cone', 
-                bottomLeftCornerOfText, 
-                font, 
-                fontScale,
-                fontColor,
-                lineType)
-            cv2.drawContours(self.frame, [contour], -1, (0, 255, 0), 2)
+            if cone != None:
+                contour = cone[2]
+                x, y, w, h = cone[3]
+                bottomLeftCornerOfText = (x, y)
+                cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+                cv2.putText(self.frame,'traffic_cone', 
+                    bottomLeftCornerOfText, 
+                    font, 
+                    fontScale,
+                    fontColor,
+                    lineType)
+                cv2.drawContours(self.frame, [contour], -1, (0, 255, 0), 2)
 
     def render(self):
         self.renderCones()
-        self.renderCameraStream()
+        self.renderCameraStream(title="Cone: ")
 
     def getLatestFrame(self):
         ret, self.frame = self.cameraStream.read()
-        self.frameHSV = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        self.frameHSV = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
 
     def update(self):
         self.getLatestFrame()

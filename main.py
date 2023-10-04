@@ -1,23 +1,18 @@
 from apriltagDetection import CameraApriltag2D
 from gamePieceDetection import CameraCone
-from apriltag import DetectorOptions
+from camera import Camera
 from cv2 import waitKey
+import cv2
 
-apriltagCam1 = CameraApriltag2D()
-coneCam1 = CameraCone()
+apriltagCam1 = CameraApriltag2D(0)
+coneCam1 = CameraCone(1)
 
 while True:
-    # apriltagCam1.update()
-    # apriltagCam1.render()
-    # apriltagCam1.printTagData2D()
-    # apriltagCam1.getLatestFrame()
-    # apriltagCam1.renderCameraStream()
+    apriltagCam1.getLatestFrame()
+    apriltagCam1.renderCameraStream()
 
-    coneCam1.getLatestFrame()
-    coneCam1.renderCameraStream()
-    # coneCam1.update()
-    # coneCam1.render()
-    # coneCam1.printConeData()
+    coneCam1.update()
+    coneCam1.render()
 
     if waitKey(1) & 0xFF == ord('q'):
         break

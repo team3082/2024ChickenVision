@@ -51,7 +51,7 @@ class CameraApriltag2D(CameraApriltag):
 
     def render(self):
         self.renderTag()
-        self.renderCameraStream()
+        self.renderCameraStream(title="Apriltag 2D: ")
 
     def update(self):
         self.getLatestFrame()

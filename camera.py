@@ -4,7 +4,7 @@ import numpy as np
 class Camera:
     def __init__(self, cameraIndex: int = 0):
         self.cameraIndex = cameraIndex
-        self.cameraStream = cv2.VideoCapture(cameraIndex)
+        self.cameraStream = cv2.VideoCapture = cv2.VideoCapture(cameraIndex)
         self.frame = None
     
     def updateCameraIndex(self, cameraIndex: int = 0):
@@ -14,5 +14,5 @@ class Camera:
     def getLatestFrame(self):
         ret, self.frame = self.cameraStream.read()
 
-    def renderCameraStream(self):
-        cv2.imshow("Camera: " + str(self.cameraIndex), self.frame)
+    def renderCameraStream(self, title: str = "Camera: "):
+        cv2.imshow(title + str(self.cameraIndex), self.frame)
