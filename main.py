@@ -3,8 +3,6 @@ from gamePieceDetection import ConeDetector
 from gamePieceDetection import CubeDetector
 from camera import Camera
 from cv2 import waitKey
-import cv2
-
 
 apriltagDetector = ApriltagDetector2D()
 cubeDetector = CubeDetector()

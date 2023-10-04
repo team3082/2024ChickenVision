@@ -50,5 +50,4 @@ class ApriltagDetector2D(ApriltagDetector):
         renderedFrame = self.renderTags(labeledFrame)
         return renderedFrame
 
-
-# class ApriltagDetector3D(CameraApriltag):
+# class ApriltagDetector3D(ApriltagDetector):
