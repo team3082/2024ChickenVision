@@ -2,12 +2,9 @@ import camera
 import numpy as np
 import cv2
 
-class CameraCube(camera.Camera):
-    def __init__(self, cameraIndex: int = 0, lowerPurple: np.ndarray = np.array([110, 150, 150]), upperPurple: np.ndarray = np.array([160, 270, 270]), arbituaryValue: float = 0.09):
-        self.cameraIndex = cameraIndex
-        self.cameraStream = cv2.VideoCapture(cameraIndex)
+class CubeDetector:
+    def __init__(self, lowerPurple: np.ndarray = np.array([110, 150, 150]), upperPurple: np.ndarray = np.array([160, 270, 270]), arbituaryValue: float = 0.09):
         self.frame = None
-        self.frameHSV = None
         self.lowerPurple = lowerPurple
         self.upperPurple = upperPurple
         self.contours = None
@@ -24,7 +21,7 @@ class CameraCube(camera.Camera):
                 print(f"Position: ({position[0]}, {position[1]})")
                 print(f"Area: {area}")
 
-    def detectcubes(self):
+    def detectCubes(self):
         # resetting data from previous frame
         if len(self.contours) > 0:
             self.cubes = [None] * len(self.contours)
@@ -38,8 +35,6 @@ class CameraCube(camera.Camera):
                 # simplifying the vertices
                 approx = cv2.approxPolyDP(cnt, self.arbituaryValue * perim, True)
 
-                print(len(approx))
-
                 # checking if its a triangle or has 3 vertices
                 if len(approx) == 4:
                     x, y, w, h = cv2.boundingRect(approx)
@@ -47,10 +42,12 @@ class CameraCube(camera.Camera):
                     area = w * h
                     self.cubes[index] = [center, area, cnt, [x, y, w, h]] 
                     index += 1
+        else:
+            self.cubes = [None]
 
     def getContours(self):
         # detecting only specific colors
-        imgThreshLow = cv2.inRange(self.frameHSV, self.lowerPurple, self.upperPurple)
+        imgThreshLow = cv2.inRange(self.frame, self.lowerPurple, self.upperPurple)
 
         # simplifying the frames
         kernel = np.ones((5,5),np.uint8)
@@ -65,7 +62,7 @@ class CameraCube(camera.Camera):
         # getting contours
         self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    def rendercubes(self):
+    def renderCubes(self, frame):
         # stuff for printing stuff to camera stream
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 2
@@ -78,34 +75,29 @@ class CameraCube(camera.Camera):
                 contour = cube[2]
                 x, y, w, h = cube[3]
                 bottomLeftCornerOfText = (x, y)
-                cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
-                cv2.putText(self.frame,'cube', 
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+                cv2.putText(frame,'cube', 
                     bottomLeftCornerOfText, 
                     font, 
                     fontScale,
                     fontColor,
                     lineType)
-                cv2.drawContours(self.frame, [contour], -1, (0, 255, 0), 2)
+                cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
+        return frame
 
-    def render(self):
-        self.rendercubes()
-        self.renderCameraStream(title="cube: ")
+    def getLatestFrame(self, frame):
+        self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    def getLatestFrame(self):
-        ret, self.frame = self.cameraStream.read()
-        self.frameHSV = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-
-    def update(self):
-        self.getLatestFrame()
+    def update(self, labeledFrame, frame):
+        self.getLatestFrame(frame)
         self.getContours()
-        self.detectcubes()
+        self.detectCubes()
+        renderedFrame = self.renderCubes(labeledFrame)
+        return renderedFrame
 
-class CameraCone(camera.Camera):
-    def __init__(self, cameraIndex: int = 0, lowerYellow: np.ndarray = np.array([20, 90, 90]), upperYellow: np.ndarray = np.array([60, 200, 200]), arbituaryValue: float = 0.09):
-        self.cameraIndex = cameraIndex
-        self.cameraStream = cv2.VideoCapture(cameraIndex)
+class ConeDetector:
+    def __init__(self, lowerYellow: np.ndarray = np.array([0, 90, 90]), upperYellow: np.ndarray = np.array([60, 200, 200]), arbituaryValue: float = 0.09):
         self.frame = None
-        self.frameHSV = None
         self.lowerYellow = lowerYellow
         self.upperYellow = upperYellow
         self.contours = None
@@ -143,10 +135,12 @@ class CameraCone(camera.Camera):
                     area = w * h
                     self.cones[index] = [center, area, cnt, [x, y, w, h]] 
                     index += 1
+        else:
+            self.cubes = [None]
 
     def getContours(self):
         # detecting only specific colors
-        imgThreshLow = cv2.inRange(self.frameHSV, self.lowerYellow, self.upperYellow)
+        imgThreshLow = cv2.inRange(self.frame, self.lowerYellow, self.upperYellow)
 
         # simplifying the frames
         kernel = np.ones((5,5),np.uint8)
@@ -161,7 +155,7 @@ class CameraCone(camera.Camera):
         # getting contours
         self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    def renderCones(self):
+    def renderCones(self, frame):
         # stuff for printing stuff to camera stream
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 2
@@ -174,24 +168,22 @@ class CameraCone(camera.Camera):
                 contour = cone[2]
                 x, y, w, h = cone[3]
                 bottomLeftCornerOfText = (x, y)
-                cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
-                cv2.putText(self.frame,'traffic_cone', 
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+                cv2.putText(frame,'traffic_cone', 
                     bottomLeftCornerOfText, 
                     font, 
                     fontScale,
                     fontColor,
                     lineType)
-                cv2.drawContours(self.frame, [contour], -1, (0, 255, 0), 2)
+                cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
+        return frame
 
-    def render(self):
-        self.renderCones()
-        self.renderCameraStream(title="Cone: ")
+    def getLatestFrame(self, frame):
+        self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    def getLatestFrame(self):
-        ret, self.frame = self.cameraStream.read()
-        self.frameHSV = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-
-    def update(self):
-        self.getLatestFrame()
+    def update(self, labeledFrame, frame):
+        self.getLatestFrame(frame)
         self.getContours()
         self.detectCones()
+        renderedFrame = self.renderCones(labeledFrame)
+        return renderedFrame

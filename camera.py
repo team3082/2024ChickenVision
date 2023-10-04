@@ -13,6 +13,7 @@ class Camera:
 
     def getLatestFrame(self):
         ret, self.frame = self.cameraStream.read()
+        return self.frame
 
-    def renderCameraStream(self, title: str = "Camera: "):
-        cv2.imshow(title + str(self.cameraIndex), self.frame)
+    def renderCameraStream(self, frame, title: str = "Camera: "):
+        cv2.imshow(title + str(self.cameraIndex), frame)

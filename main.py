@@ -1,20 +1,25 @@
-from apriltagDetection import CameraApriltag2D
-from gamePieceDetection import CameraCone
-from gamePieceDetection import CameraCube
+from apriltagDetection import ApriltagDetector2D
+from gamePieceDetection import ConeDetector
+from gamePieceDetection import CubeDetector
 from camera import Camera
 from cv2 import waitKey
 import cv2
 
-apriltagCam1 = CameraApriltag2D(0)
-# cubeCam1 = CameraCone(cameraIndex=0, arbituaryValue=0.08)
+
+apriltagDetector = ApriltagDetector2D()
+cubeDetector = CubeDetector()
+coneDetector = ConeDetector()
+cam0 = Camera(0)
 
 while True:
-    apriltagCam1.update()
-    apriltagCam1.render()
+    frame = cam0.getLatestFrame()
+    labeledFrame = frame
 
-    # cubeCam1.update()
-    # cubeCam1.printConeData()
-    # cubeCam1.render()
+    labeledFrame = apriltagDetector.update(labeledFrame, frame)
+    labeledframe = cubeDetector.update(labeledFrame, frame)
+    labeledFrame = coneDetector.update(labeledFrame, frame)
+
+    cam0.renderCameraStream(labeledframe)
 
     if waitKey(1) & 0xFF == ord('q'):
         break
