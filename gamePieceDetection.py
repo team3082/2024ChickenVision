@@ -101,7 +101,7 @@ class CameraCube(camera.Camera):
         self.detectcubes()
 
 class CameraCone(camera.Camera):
-    def __init__(self, cameraIndex: int = 0, lowerYellow: np.ndarray = np.array([0, 90, 90]), upperYellow: np.ndarray = np.array([60, 200, 200]), arbituaryValue: float = 0.09):
+    def __init__(self, cameraIndex: int = 0, lowerYellow: np.ndarray = np.array([20, 90, 90]), upperYellow: np.ndarray = np.array([60, 200, 200]), arbituaryValue: float = 0.09):
         self.cameraIndex = cameraIndex
         self.cameraStream = cv2.VideoCapture(cameraIndex)
         self.frame = None
