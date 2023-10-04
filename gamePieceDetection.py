@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 class CameraCube(camera.Camera):
-    def __init__(self, cameraIndex: int = 0, lowerPurple: np.ndarray = np.array([260, 90, 90]), upperPurple: np.ndarray = np.array([300, 100, 100]), arbituaryValue: float = 0.09):
+    def __init__(self, cameraIndex: int = 0, lowerPurple: np.ndarray = np.array([110, 150, 150]), upperPurple: np.ndarray = np.array([160, 270, 270]), arbituaryValue: float = 0.09):
         self.cameraIndex = cameraIndex
         self.cameraStream = cv2.VideoCapture(cameraIndex)
         self.frame = None
@@ -37,6 +37,8 @@ class CameraCube(camera.Camera):
 
                 # simplifying the vertices
                 approx = cv2.approxPolyDP(cnt, self.arbituaryValue * perim, True)
+
+                print(len(approx))
 
                 # checking if its a triangle or has 3 vertices
                 if len(approx) == 4:
@@ -77,7 +79,7 @@ class CameraCube(camera.Camera):
                 x, y, w, h = cube[3]
                 bottomLeftCornerOfText = (x, y)
                 cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
-                cv2.putText(self.frame,'traffic_cube', 
+                cv2.putText(self.frame,'cube', 
                     bottomLeftCornerOfText, 
                     font, 
                     fontScale,
@@ -99,7 +101,7 @@ class CameraCube(camera.Camera):
         self.detectcubes()
 
 class CameraCone(camera.Camera):
-    def __init__(self, cameraIndex: int = 0, lowerYellow: np.ndarray = np.array([30, 90, 90]), upperYellow: np.ndarray = np.array([60, 100, 100]), arbituaryValue: float = 0.09):
+    def __init__(self, cameraIndex: int = 0, lowerYellow: np.ndarray = np.array([0, 90, 90]), upperYellow: np.ndarray = np.array([60, 200, 200]), arbituaryValue: float = 0.09):
         self.cameraIndex = cameraIndex
         self.cameraStream = cv2.VideoCapture(cameraIndex)
         self.frame = None

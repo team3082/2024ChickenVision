@@ -13,6 +13,7 @@ while True:
     # apriltagCam1.render()
 
     cubeCam1.update()
+    cubeCam1.printcubeData()
     cubeCam1.render()
 
     if waitKey(1) & 0xFF == ord('q'):
