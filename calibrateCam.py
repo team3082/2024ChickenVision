@@ -5,8 +5,8 @@ class CameraCalibrator:
     def __init__(self):
         self.data = {'objpoints': [], 'imgpoints': [], 'frames': []}
         self.criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-        self.objp = np.zeros((6*7,3), np.float32)
-        self.objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
+        self.objp = np.zeros((7*9,3), np.float32)
+        self.objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2)
         self.frameGray = None
         self.corners = None
         self.cornersRefined = None
@@ -34,7 +34,8 @@ class CameraCalibrator:
         self.getLatestFrame(frame)
         labeledFrame = self.renderFrame(labeledFrame)
         if cv2.waitKey(1) & 0xFF == ord('c'):
-            self.storeFrameData(labeledFrame)
-            self.showFrameCapture(labeledFrame)
+            if self.ret:
+                self.storeFrameData(labeledFrame)
+                self.showFrameCapture(labeledFrame)
         return labeledFrame
     
