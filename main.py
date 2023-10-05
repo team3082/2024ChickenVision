@@ -1,7 +1,7 @@
-from apriltagDetection import ApriltagDetector2D
-from gamePieceDetection import ConeDetector
-from gamePieceDetection import CubeDetector
-from calibrateCam import CameraCalibrator
+from detectors.apriltagDetection import ApriltagDetector2D
+from detectors.gamePieceDetection import ConeDetector
+from detectors.gamePieceDetection import CubeDetector
+from detectors.calibrateCam import CameraCalibrator
 from camera import Camera
 from cv2 import waitKey
 
