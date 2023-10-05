@@ -4,7 +4,7 @@ import numpy as np
 class Camera:
     def __init__(self, cameraIndex: int = 0):
         self.cameraIndex = cameraIndex
-        self.cameraStream = cv2.VideoCapture = cv2.VideoCapture(cameraIndex)
+        self.cameraStream: cv2.VideoCapture = cv2.VideoCapture(cameraIndex)
         self.frame = None
     
     def updateCameraIndex(self, cameraIndex: int = 0):
