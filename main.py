@@ -19,9 +19,9 @@ while True:
     # labeledframe = cubeDetector.update(labeledFrame, frame)
     # labeledFrame = coneDetector.update(labeledFrame, frame)
     labeledFrame = cameraCalibrator.renderCalibTarget(labeledFrame)
-    if waitKey(1) & 0xFF == ord('c'):
-        cameraCalibrator.update(frame)
-        print("calibrating for frame")
+    # if waitKey(1) & 0xFF == ord('c'):
+    #     cameraCalibrator.update(frame)
+    #     print("calibrating for frame")
 
     cam0.renderCameraStream(labeledFrame)
 

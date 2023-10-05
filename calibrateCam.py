@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import glob
 
 class CameraCalibrator:
     def __init__(self):
@@ -34,8 +33,8 @@ class CameraCalibrator:
         # termination criteria
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-        ret, corners = cv2.findChessboardCorners(frame, (7,6), None)
-        # If found, add object points, image points (after refining them)
+        ret, corners = cv2.findChessboardCorners(frame, (8,9), None)
+
         if ret == True:
             corners2 = cv2.cornerSubPix(frame, corners, (11,11), (-1,-1), criteria)
             # Draw and display the corners
