@@ -1,6 +1,23 @@
 import cv2 as cv2
 import numpy as np
 
+def getAvailableCameraIndexes():
+    index = 0
+    arr = []
+    non = 0
+    while True:
+        cap = cv2.VideoCapture(index)
+        if not cap.read()[0]:
+            non += 1
+            if non == 5:
+                break
+        else:
+            arr.append(index)
+            non = 0
+        cap.release()
+        index += 1
+    return arr
+
 class Camera:
     def __init__(self, cameraIndex: int = 0):
         self.cameraIndex = cameraIndex
