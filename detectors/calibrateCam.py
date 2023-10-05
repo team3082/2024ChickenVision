@@ -1,5 +1,6 @@
 import cv2 as cv2
 import numpy as np
+import json
 
 class CameraCalibrator:
     def __init__(self):
@@ -29,6 +30,27 @@ class CameraCalibrator:
     
     def showFrameCapture(self, frame):
         cv2.imshow("capture: " + str(len(self.data['objpoints'])), frame)
+
+    # fix this its no worky
+    def storeJson(self, camIndex):
+        save_file = open("cameraParams" + str(camIndex) + ".json", "w") 
+        calibData = []
+        for i in range(len(self.data['objpoints'])):
+            ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(self.data['objpoints'][i], self.data['imgpoints'][i], (640, 480), None, None)
+            calibData.append([ret, mtx, dist, rvecs, tvecs])
+
+        avgmtx = 0
+        avgdist = 0
+        for data in calibData:
+            avgmtx += data[1]
+            avgdist += data[2]
+
+        avgmtx /= len(calibData)
+        avgdist /= len(calibData)
+
+        dataJson = {'avgmtx': avgmtx, 'avgdist': avgdist, 'data': calibData}
+        save_file.write(dataJson)
+        save_file.close()  
 
     def update(self, labeledFrame, frame):
         self.getLatestFrame(frame)

@@ -20,4 +20,5 @@ while True:
     cam0.renderCameraStream(labeledFrame)
 
     if waitKey(1) & 0xFF == ord('q'):
+        cameraCalibrator.storeJson(cam0.cameraIndex)
         break
