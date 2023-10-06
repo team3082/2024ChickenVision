@@ -1,13 +1,14 @@
 import cv2 as cv2
 import numpy as np
 import json
+import os
 
 class CameraCalibrator:
     def __init__(self):
         self.data = {'objpoints': [], 'imgpoints': [], 'frames': []}
         self.criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-        self.objp = np.zeros((7*9,3), np.float32)
-        self.objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2)
+        self.objp = np.zeros((6*7,3), np.float32)
+        self.objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
         self.frameGray = None
         self.corners = None
         self.cornersRefined = None
@@ -15,12 +16,12 @@ class CameraCalibrator:
 
     def getLatestFrame(self, frame):
         self.frameGray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.ret, self.corners = cv2.findChessboardCorners(frame, (9, 7), None)
+        self.ret, self.corners = cv2.findChessboardCorners(frame, (7, 6), None)
     
     def renderFrame(self, frame):
         if self.ret == True:
             self.cornersRefined = cv2.cornerSubPix(self.frameGray, self.corners, (11,11), (-1,-1), self.criteria)
-            cv2.drawChessboardCorners(frame, (9, 7), self.cornersRefined, self.ret)
+            cv2.drawChessboardCorners(frame, (7, 6), self.cornersRefined, self.ret)
         return frame
     
     def storeFrameData(self, frame):
@@ -30,6 +31,11 @@ class CameraCalibrator:
     
     def showFrameCapture(self, frame):
         cv2.imshow("capture: " + str(len(self.data['objpoints'])), frame)
+        directory = "/home/kader/dev/2024ChickenVision/calibImgs"
+        os.chdir(directory)
+        cv2.imwrite("capture" + str(len(self.data['objpoints'])) + ".png", frame)
+        cv2.imwrite("captureGray" + str(len(self.data['objpoints'])) + ".png", self.frameGray)
+
 
     # fix this its no worky
     def storeJson(self, camIndex):
