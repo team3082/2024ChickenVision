@@ -41,11 +41,20 @@ class CameraCalibrator:
         dists = []
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(self.objpoints, self.imgpoints, self.frameGray.shape[::-1], None, None)
         
+        fx = mtx[0,0]
+        fy = mtx[1,1]
+        cx = mtx[0,2]
+        cy = mtx[1,2]
+
+        params = [fx, fy, cx, cy]
+
+        print()
+
         mtx = np.ndarray.tolist(mtx)
         dist = np.ndarray.tolist(dist)
 
         # storing values to json
-        calibDataDict = {'mtx': mtx, 'dist': dist}
+        calibDataDict = {'mtx': mtx, 'dist': dist, 'params': params}
         directory = "/home/kader/dev/2024ChickenVision/calibData"
         os.chdir(directory)
         calibDataJson = open("cam" + str(camIndex) + ".json", 'w')

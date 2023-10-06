@@ -26,6 +26,7 @@ class Camera:
         self.frame = None
         self.mtx = []
         self.dist = []
+        self.params = ()
     
     def updateCameraIndex(self, cameraIndex: int = 0):
         self.cameraIndex = cameraIndex
@@ -41,6 +42,7 @@ class Camera:
 
             self.mtx = cv2.Mat(np.array(mtx, dtype=np.float32))
             self.dist = cv2.Mat(np.array(dist, dtype=np.float32))
+            self.params = calibDataDict['params']
 
             print("calibration data found")
         

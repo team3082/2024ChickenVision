@@ -50,4 +50,40 @@ class ApriltagDetector2D(ApriltagDetector):
         renderedFrame = self.renderTags(labeledFrame)
         return renderedFrame
 
-# class ApriltagDetector3D(ApriltagDetector):
+class ApriltagDetector3D(ApriltagDetector):
+    def __init__(self, options: apriltag.DetectorOptions = apriltag.DetectorOptions(families="tag16h5"), decisionMargin: int = 30, tagSize: float = 1.0, camParams: tuple(float, float, float, float) = (0, 0, 0, 0)):
+        self.options = options
+        self.detector = apriltag.Detector(options)
+        self.decisionMargin = decisionMargin
+        self.frame = None
+        # [tags[], poses[], initError[], finalError[]]
+        self.tags = [None, [], [], []]
+        self.camParams = camParams
+        self.tagSize = tagSize
+
+    def setCamParams(self, camParams):
+        self.camParams = camParams
+
+    def detectTags3D(self):
+        self.tags = [None, [], []]
+        self.tags[0] = self.detector.detect(self.frame)
+        for tag in self.tags:
+            pose, e0, e1 = self.detector.detection_pose(tag,
+                                                  self.camParams,
+                                                  self.tagSize)
+            self.tags[1].append(pose)
+            self.tags[2].append(e0)
+            self.tags[3].append(e1)
+        
+    def printTagData3D(self):
+        for i in range(len(self.tags[0])):
+            print(f"pose data: {self.tags[1][i]}")
+            print(f"tag id: {self.tags[0][i].tag_id}")
+
+    def renderTags3D(self, frame):
+        for pose in self.tags[1]:
+            apriltag._draw_pose(frame,
+                               self.options.camera_params,
+                               self.options.tag_size,
+                               pose)
+    
