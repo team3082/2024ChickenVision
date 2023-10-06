@@ -1,11 +1,15 @@
+import os
+import sys
+sys.path.append("detectors")
 #from apriltagDetection import ApriltagDetector2D
 from gamePieceDetection import ConeDetector
 from gamePieceDetection import CubeDetector
+from gamePieceDetectionML import *
 from calibrateCam import CameraCalibrator
 from camera import Camera
 from cv2 import waitKey
-from gamePieceDetectionML import *
-import os
+
+
 
 # apriltagDetector = ApriltagDetector2D()
 # cubeDetector = CubeDetector()
