@@ -10,14 +10,12 @@ from cv2 import waitKey
 # coneDetector = ConeDetector()
 cameraCalibrator = CameraCalibrator()
 cam0 = Camera(4)
+cam0.getCalibrationInfo()
 
 while True:
-    frame = cam0.getLatestFrame()
-    labeledFrame = frame
-
-    labeledFrame = cameraCalibrator.update(labeledFrame, frame)
-
-    cam0.renderCameraStream(labeledFrame)
+    
+    cam0.renderCameraStream(cam0.getLatestFrame(), "uncalibrated")
+    cam0.renderCameraStream(cam0.getLatestFrameCalibrated(), "calibrated")
 
     if waitKey(1) & 0xFF == ord('q'):
         # cameraCalibrator.storeJson(cam0.cameraIndex)
