@@ -46,7 +46,7 @@ class CameraCalibrator:
         cx = mtx[0,2]
         cy = mtx[1,2]
 
-        params = [fx, fy, cx, cy]
+        params = (fx, fy, cx, cy)
 
         print()
 
@@ -54,7 +54,7 @@ class CameraCalibrator:
         dist = np.ndarray.tolist(dist)
 
         # storing values to json
-        calibDataDict = {'mtx': mtx, 'dist': dist, 'params': params}
+        calibDataDict = {'mtx': mtx, 'dist': dist, 'params': list(params)}
         directory = "/home/kader/dev/2024ChickenVision/calibData"
         os.chdir(directory)
         calibDataJson = open("cam" + str(camIndex) + ".json", 'w')

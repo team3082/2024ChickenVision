@@ -42,7 +42,7 @@ class Camera:
 
             self.mtx = cv2.Mat(np.array(mtx, dtype=np.float32))
             self.dist = cv2.Mat(np.array(dist, dtype=np.float32))
-            self.params = calibDataDict['params']
+            self.params = tuple(calibDataDict['params'])
 
             print("calibration data found")
         
