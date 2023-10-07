@@ -1,27 +1,29 @@
-import os
-import sys
-sys.path.append("detectors")
-#from apriltagDetection import ApriltagDetector2D
-from detectors.gamePieceDetection import ConeDetector
-from detectors.gamePieceDetection import CubeDetector
-from detectors.calibrateCam import CameraCalibrator
+from flask import Flask, render_template, Response
 from camera import Camera
-from cv2 import waitKey
-from detectors.gamePieceDetectionML import *
-import os
 
-cam0 = Camera(0)
-# configPath = os.path.join("model_data", "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt")
-# modelPath = os.path.join("model_data", "frozen_inference_graph.pb")
-# classesPath = os.path.join("model_data","coco.names")
-detector = GamePieceDetectionML()
-while True:
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+def gen(cap: Camera):
     
-    frame = cam0.getLatestFrame()
-    detector.captureVideo(frame)
+    while True:
+        frame = cap.getLatestFrame()
+        labeledframe = frame
+        
+        
+        labeledframe = cap.convertFrameToBytes(labeledframe)
+        
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-    cam0.renderCameraStream(frame)
+@app.route('/video_feed')
+def video_feed():
+    print('among us')
+    return Response(gen(Camera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
-    if waitKey(1) & 0xFF == ord('q'):
-        break
-
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True, port=8000)

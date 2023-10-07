@@ -53,6 +53,10 @@ class Camera:
         ret, self.frame = self.cameraStream.read()
         return self.frame
     
+    def convertFrameToBytes(self, frame):
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        return jpeg.tobytes()
+    
     def getLatestFrameCalibrated(self):
         ret, frame = self.cameraStream.read()
 
