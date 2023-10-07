@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append("detectors")
 #from apriltagDetection import ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector
 from detectors.gamePieceDetection import CubeDetector
