@@ -1,13 +1,14 @@
 # Import the camera server
-from cscore import CameraServer
+from cscore import CameraServer as cs
 
 # Import OpenCV and NumPy
 import cv2
 import numpy as np
 
 def main():
-    cs = CameraServer()
     cs.enableLogging()
+    
+    print(cs.kBasePort)
 
     # Capture from the first USB Camera on the system
     camera = cs.startAutomaticCapture()
@@ -17,7 +18,7 @@ def main():
     cvSink = cs.getVideo()
 
     # (optional) Setup a CvSource. This will send images back to the Dashboard
-    outputStream = cs.putVideo("Name", 320, 240)
+    outputStream = cs.putVideo("Name", 1280, 720)
 
     # Allocating new images is very expensive, always try to preallocate
     img = np.zeros(shape=(240, 320, 3), dtype=np.uint8)
