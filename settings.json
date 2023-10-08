@@ -1,13 +1,1 @@
-{"cam0": {
-    "cameraSettings": {
-
-    },
-    "pipelineSettings": {
-        "toggles": [true, false, false, false, false],
-        "apriltag2D": {},
-        "apriltag3D": {},
-        "gamePieceGeo": {},
-        "gamePieceML": {},
-        "retroreflective": {}
-    }
-}}
+{"cam0": {"cameraSettings": {}, "pipelineSettings": {"toggles": [false, false, false, false, false], "apriltag2D": {}, "apriltag3D": {}, "gamePieceGeo": {}, "gamePieceML": {}, "retroreflective": {}}}}

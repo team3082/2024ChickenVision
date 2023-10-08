@@ -1,8 +1,8 @@
 from flask import Flask, render_template, Response, request
 from camera import Camera
-from detectors.apriltagDetection import ApriltagDetector3D
+from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
+from detectors.gamePieceDetection import ConeDetector, CubeDetector
 import json
-apriltag3Detecting = True
 app = Flask(__name__)
 
 @app.route('/')
@@ -21,14 +21,29 @@ def gen():
     cap = Camera(camIndex)
     cap.getCalibrationInfo()
     
+    apriltag2 = ApriltagDetector2D()
     apriltag3 = ApriltagDetector3D(camParams=cap.params)
+    
+    cone = ConeDetector()
+    cube = CubeDetector()
     
     while True:
         frame = cap.getLatestFrame()
         labeledFrame = frame
         
-        if apriltag3Detecting:
+        settings = open("settings.json", "r")
+        settingsDict = json.loads(settings.read())
+        settings.close()
+        
+        toggles = settingsDict["cam" + str(camIndex)]["pipelineSettings"]["toggles"]
+        
+        if toggles[0] == True:
+            labeledFrame = apriltag2.update(labeledFrame, frame)
+        if toggles[1] == True:
             labeledFrame = apriltag3.update(labeledFrame, frame)
+        if toggles[2] == True:
+            labeledFrame = cone.update(labeledFrame, frame)
+            labeledFrame = cube.update(labeledFrame, frame)
         
         labeledFrame = cap.convertFrameToBytes(labeledFrame)
         
@@ -37,23 +52,23 @@ def gen():
         
     cap.cameraStream.release()
     
-@app.route('/pageData.json', methods = ['GET', 'POST', 'DELETE'])
+@app.route('/pageData.json', methods = ['GET', 'POST'])
 def getPageData():
     if request.method == 'GET':
         return open("pageData.json", "r")
     if request.method == "POST":
-        data = request.json
+        data = json.dumps(request.json)
         settings = open("pageData.json", "w")
         settings.write(data)
         settings.close()
         return "good"
 
-@app.route('/settings.json', methods = ['GET', 'POST', 'DELETE'])
+@app.route('/settings.json', methods = ['GET', 'POST'])
 def getSettings():
     if request.method == 'GET':
         return open("settings.json", "r")
     if request.method == "POST":
-        data = request.json
+        data = json.dumps(request.json)
         settings = open("settings.json", "w")
         settings.write(data)
         settings.close()
