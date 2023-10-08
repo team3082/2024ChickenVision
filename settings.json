@@ -18,11 +18,45 @@
             false,
             false
          ],
-         "apriltag2D": {},
-         "apriltag3D": {},
-         "gamePieceGeo": {},
-         "gamePieceML": {},
-         "retroreflective": {}
+         "apriltag2D": {
+            "family": "16h5",
+            "nthreads": 1,
+            "quadDecimate": 1.0,
+            "quadBlur": 0.0,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": 50
+         },
+         "apriltag3D": {
+            "family": "16h5",
+            "nthreads": 1,
+            "quadDecimate": 1.0,
+            "quadBlur": 0.0,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": 50,
+            "fov": 70
+         },
+         "gamePieceGeo": {
+            "lowerPurple": [110, 150, 150],
+            "upperPurple": [160, 270, 270],
+            "arbituaryValueCube": 0.09,
+            "lowerYellow": [110, 150, 150],
+            "upperYellow": [160, 270, 270],
+            "arbituaryValueCone": 0.09
+         },
+         "gamePieceML": {
+
+         },
+         "retroreflective": {
+            "lowerGreen": [0, 0, 0],
+            "upperGreen": [0, 0, 0],
+            "lightOn": true
+         }
       }
    }
 }

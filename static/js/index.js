@@ -202,7 +202,7 @@ async function updatePageDataJSON(pageDataJSON) {
     })
 }
 
-async function getSettingsJSON(settingsJSON) {
+async function getSettingsJSON() {
     let response = await fetch('settings.json')
     let json = await response.json()
     return json
@@ -218,6 +218,8 @@ async function updateSettingsJSON(settingsJSON) {
 }
 
 loadCurrentPage()
+
+
 
 switchCamSettings.addEventListener('click', function() {switchSettingsPage(0)});
 switchPipeSettings.addEventListener('click', function() {switchSettingsPage(1)});
