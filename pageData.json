@@ -1,6 +1,6 @@
 {
     "currentCamera": 0,
-    "currentSettingsPage": 2,
+    "currentSettingsPage": 1,
     "currentCameraSettingsPage": 0,
-    "currentPipelineSettingsPage": 0 
+    "currentPipelineSettingsPage": {"toggles": [true, false, false, false, false]}
 }

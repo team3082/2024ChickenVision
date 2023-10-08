@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Response, request
 from camera import Camera
 from detectors.apriltagDetection import ApriltagDetector3D
+import json
 apriltag3Detecting = True
 app = Flask(__name__)
 
@@ -47,9 +48,14 @@ def video_feed(cam_id):
     return Response(gen(cam_id),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
+@app.route('/pipelineSettings.json')
+def pipelineSettingsTemplate():
+    html = open('templates/settings/pipelineSettings.html', 'r')
+    return json.dumps({"data": html.read()})
+    
 @app.route('/settings.html')
 def settingsTemplate():
-    return open('templates/settings.html', 'r')
+    return {"data": open('templates/settings/settings.html', 'r')}
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)
