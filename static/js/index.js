@@ -3,6 +3,7 @@ const switchPipeSettings = document.getElementById('pipelineSettings');
 const switchSettings = document.getElementById('settings')
 const settingsContainer = document.getElementById('settingsContainer');
 
+// Setup upon Loading
 async function loadCurrentPage() {
     let pageDataJSON = await getPageDataJSON()
     let pageIndex = pageDataJSON["currentSettingsPage"]
@@ -37,6 +38,7 @@ async function switchSettingsPage(index) {
     }
 }
 
+// Camera Settings
 async function loadCameraSettings() {
     let pageDataJSON = await getPageDataJSON()
     let settingsJSON = await getSettingsJSON()
@@ -129,6 +131,7 @@ async function updateCameraSettings() {
     updateSettingsJSON(settingsJSON)
 }
 
+// Pipeline Settings
 async function loadPipelineSettings() {
     let pageDataJSON = await getPageDataJSON();
     let settingsJSON = await getSettingsJSON();
@@ -141,13 +144,25 @@ function setPipelineSettings(toggles) {
     const apriltag3Toggle = document.getElementById("apriltag3Toggle");
     const gamePieceGeoToggle = document.getElementById("gamePieceGeoToggle");
     const gamePieceMLToggle = document.getElementById("gamePieceMLToggle");
-    const retroReflectiveToggle = document.getElementById("gamePieceMLToggle");
+    const retroReflectiveToggle = document.getElementById("retroReflectiveToggle");
 
     apriltag2Toggle.checked = toggles[0]
     apriltag3Toggle.checked = toggles[1]
     gamePieceGeoToggle.checked = toggles[2]
     gamePieceMLToggle.checked = toggles[3]
     retroReflectiveToggle.checked = toggles[4]
+
+    const apriltag2DropToggle = document.getElementById("apriltag2DropToggle");
+    const apriltag3DropToggle = document.getElementById("apriltag3DropToggle");
+    const gamePieceGeoDropToggle = document.getElementById("gamePieceGeoDropToggle");
+    const gamePieceMLDropToggle = document.getElementById("gamePieceMLDropToggle");
+    const retroReflectiveDropToggle = document.getElementById("retroReflectiveDropToggle");
+    
+    apriltag2DropToggle.addEventListener('click', async function() {await loadApriltag2Settings()})
+    apriltag3DropToggle.addEventListener('click', async function() {await loadApriltag3Settings()})
+    gamePieceGeoDropToggle.addEventListener('click', async function() {await loadGamePieceGeoSettings()})
+    gamePieceMLDropToggle.addEventListener('click', async function() {await loadGamePieceMLSettings()})
+    retroReflectiveDropToggle.addEventListener('click', async function() {await loadRetroReflectiveSettings()})
 
     apriltag2Toggle.addEventListener('click', async function() {await updatePipelineSettings()});
     apriltag3Toggle.addEventListener('click', async function() {await updatePipelineSettings()});
@@ -162,7 +177,7 @@ async function updatePipelineSettings() {
     const apriltag3Toggle = document.getElementById("apriltag3Toggle");
     const gamePieceGeoToggle = document.getElementById("gamePieceGeoToggle");
     const gamePieceMLToggle = document.getElementById("gamePieceMLToggle");
-    const retroReflectiveToggle = document.getElementById("gamePieceMLToggle");
+    const retroReflectiveToggle = document.getElementById("retroReflectiveToggle");
 
     let pageDataJSON = await getPageDataJSON()
     let settingsJSON = await getSettingsJSON()
@@ -176,7 +191,118 @@ async function updatePipelineSettings() {
     updateSettingsJSON(settingsJSON);
 }
 
-// TO DO
+// Apriltag 2D Settings
+async function loadApriltag2Settings() {
+    const apriltag2Content = document.getElementById("apriltag2Content");
+
+    let data = await fetch("apriltag2Settings.json")
+    let dataJSON = await data.json()
+    let dataHTML = await dataJSON["data"]
+
+    if (apriltag2Content.innerHTML == "") {
+        apriltag2Content.innerHTML = dataHTML;
+    }
+    else {
+        apriltag2Content.innerHTML = "";
+    }
+}
+function setApriltag2Settings(values) {
+
+}
+async function updateApriltag2Settings() {
+
+}
+
+// Apriltag 3D Settings
+async function loadApriltag3Settings() {
+    const apriltag3Content = document.getElementById("apriltag3Content");
+
+    let data = await fetch("apriltag3Settings.json")
+    let dataJSON = await data.json()
+    let dataHTML = await dataJSON["data"]
+
+    if (apriltag3Content.innerHTML == "") {
+        apriltag3Content.innerHTML = dataHTML;
+    }
+    else {
+        apriltag3Content.innerHTML = "";
+    }
+}
+function setApriltag3Settings(values) {
+
+}
+async function updateApriltag3Settings() {
+    
+}
+
+// Game Piece Geometry Settings
+async function loadGamePieceGeoSettings() {
+    const gamePieceGeoContent = document.getElementById("gamePieceGeoContent");
+
+    let data = await fetch("gamePieceGeoSettings.json")
+    let dataJSON = await data.json()
+    let dataHTML = await dataJSON["data"]
+
+    if (gamePieceGeoContent.innerHTML == "") {
+        gamePieceGeoContent.innerHTML = dataHTML;
+    }
+    else {
+        gamePieceGeoContent.innerHTML = "";
+    }
+}
+function setGamePieceGeoSettings(values) {
+
+}
+async function updateGamePieceGeoSettings() {
+    
+}
+
+// Game Piece Machine Learning Settings
+async function loadGamePieceMLSettings() {
+    const gamePieceMLContent = document.getElementById("gamePieceMLContent");
+
+    let data = await fetch("gamePieceMLSettings.json")
+    let dataJSON = await data.json()
+    let dataHTML = await dataJSON["data"]
+
+    if (gamePieceMLContent.innerHTML == "") {
+        gamePieceMLContent.innerHTML = dataHTML;
+    }
+    else {
+        gamePieceMLContent.innerHTML = "";
+    }
+}
+function setGamePieceMLSettings(values) {
+
+}
+async function updateGamePieceMLSettings() {
+    
+}
+
+// RetroReflective Settings
+async function loadRetroReflectiveSettings() {
+    const retroReflectiveContent = document.getElementById("retroReflectiveContent");
+
+    let data = await fetch("retroReflectiveSettings.json")
+    let dataJSON = await data.json()
+    let dataHTML = await dataJSON["data"]
+
+
+    if (retroReflectiveContent.innerHTML == "") {
+        retroReflectiveContent.innerHTML = dataHTML;
+    }
+    else {
+        retroReflectiveContent.innerHTML = "";
+    }
+}
+function setRetroReflectiveSettings(values) {
+
+}
+async function updateRetroReflectiveSettings() {
+    
+}
+
+// TO DO | General Configuration Settings
 function loadSettings() {
 
 }
@@ -187,6 +313,7 @@ function updateSettings() {
 
 }
 
+// get and post requests to flask server
 async function getPageDataJSON() {
     let response = await fetch('pageData.json')
     let json = await response.json()
@@ -201,7 +328,6 @@ async function updatePageDataJSON(pageDataJSON) {
         }
     })
 }
-
 async function getSettingsJSON() {
     let response = await fetch('settings.json')
     let json = await response.json()
@@ -218,8 +344,6 @@ async function updateSettingsJSON(settingsJSON) {
 }
 
 loadCurrentPage()
-
-
 
 switchCamSettings.addEventListener('click', function() {switchSettingsPage(0)});
 switchPipeSettings.addEventListener('click', function() {switchSettingsPage(1)});

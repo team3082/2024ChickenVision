@@ -7,14 +7,12 @@ import json
 app = Flask(__name__)
 app.config['SERVER_NAME'] = 'chickenvision:8000'
 
+# render main page template
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/button')
-def button():
-    return "baller"
-
+# render mjpeg camera stream
 def gen():
     with open("pageData.json", "r") as pageData:
         data = json.loads(pageData.read())
@@ -54,6 +52,7 @@ def gen():
         
     cap.cameraStream.release()
     
+# GET/POST JSON STORAGE
 @app.route('/pageData.json', methods = ['GET', 'POST'])
 def getPageData():
     if request.method == 'GET':
@@ -76,6 +75,7 @@ def getSettings():
         settings.close()
         return "good"
 
+# GET VIDEO FEED STUFF
 @app.route('/available_feeds')
 def available_feeds():
     data = json.dumps({"data": [camera.getAvailableCameraIndexes()]})
@@ -86,6 +86,7 @@ def video_feed():
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
+# GET HTML TEMPLATES
 @app.route('/cameraSettings.json')
 def cameraSettingsTemplate():
     html = open('templates/settings/cameraSettings.html', 'r')
@@ -94,6 +95,31 @@ def cameraSettingsTemplate():
 @app.route('/pipelineSettings.json')
 def pipelineSettingsTemplate():
     html = open('templates/settings/pipelineSettings.html', 'r')
+    return json.dumps({"data": html.read()})
+
+@app.route('/apriltag2Settings.json')
+def apriltag2SettingsTemplate():
+    html = open('templates/settings/pipelineSettings/apriltag2.html', 'r')
+    return json.dumps({"data": html.read()})
+
+@app.route('/apriltag3Settings.json')
+def apriltag3SettingsTemplate():
+    html = open('templates/settings/pipelineSettings/apriltag3.html', 'r')
+    return json.dumps({"data": html.read()})
+
+@app.route('/gamePieceGeoSettings.json')
+def gamePieceGeoSettingsTemplate():
+    html = open('templates/settings/pipelineSettings/gamePieceGeo.html', 'r')
+    return json.dumps({"data": html.read()})
+
+@app.route('/gamePieceMLSettings.json')
+def gamePieceMLSettingsTemplate():
+    html = open('templates/settings/pipelineSettings/gamePieceML.html', 'r')
+    return json.dumps({"data": html.read()})
+
+@app.route('/retroReflectiveSettings.json')
+def retroReflectiveSettingsTemplate():
+    html = open('templates/settings/pipelineSettings/retroReflective.html', 'r')
     return json.dumps({"data": html.read()})
     
 @app.route('/settings.json')

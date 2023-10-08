@@ -1,20 +1,37 @@
-<div class="pipelineToggle">
-    <h3>Apriltag 2D</h3>
-    <input type="checkbox" id="apriltag2Toggle"/>
-</div>
-<div class="pipelineToggle">
-    <h3>Apriltag 3D</h3>
-    <input type="checkbox" id="apriltag3Toggle"/>
-</div>
-<div class="pipelineToggle">
-    <h3>Game Piece Geometry</h3>
-    <input type="checkbox" id="gamePieceGeoToggle"/>
-</div>
-<div class="pipelineToggle">
-    <h3>Game Piece ML</h3>
-    <input type="checkbox" id="gamePieceMLToggle"/>
-</div>
-<div class="pipelineToggle">
-    <h3>Retroreflective Tape</h3>
-    <input type="checkbox" id="gamePieceMLToggle"/>
-</div>
+<nav class="pipelineNav">
+    <div class="pipelineSetting">
+        <button id="apriltag2DropToggle">Apriltag 2D</button>
+        <div class="pipelineToggle">
+            <input class="pipelineNavInput" type="checkbox" id="apriltag2Toggle"/>
+        </div>
+    </div>
+    <div class="pipelineSettingContent" id="apriltag2Content" style="display: inline;"></div>
+    <div class="pipelineSetting">
+        <button id="apriltag3DropToggle">Apriltag 3D</button>
+        <div class="pipelineToggle">
+            <input class="pipelineNavInput" type="checkbox" id="apriltag3Toggle"/>
+        </div>
+    </div>
+    <div class="pipelineSettingContent" id="apriltag3Content"></div>
+    <div class="pipelineSetting">
+        <button id="gamePieceGeoDropToggle" type="checkbox">Game Piece Geometry</button>
+        <div class="pipelineToggle">
+            <input class="pipelineNavInput" type="checkbox" id="gamePieceGeoToggle"/>
+        </div>
+    </div>
+    <div class="pipelineSettingContent" id="gamePieceGeoContent"></div>
+    <div class="pipelineSetting">
+        <button id="gamePieceMLDropToggle">Game Piece ML</button>
+        <div class="pipelineToggle">
+            <input class="pipelineNavInput" type="checkbox" id="gamePieceMLToggle"/>
+        </div>
+    </div>
+    <div class="pipelineSettingContent" id="gamePieceMLContent"></div>
+    <div class="pipelineSetting">
+        <button id="retroReflectiveDropToggle">RetroReflective</button>
+        <div class="pipelineToggle">
+            <input class="pipelineNavInput" type="checkbox" id="retroReflectiveToggle"/>
+        </div>
+    </div>
+    <div class="pipelineSettingContent" id="retroReflectiveContent"></div>
+</nav>

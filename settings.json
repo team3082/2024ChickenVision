@@ -7,13 +7,13 @@
          "saturation": "50",
          "hue": "50",
          "gamma": "120",
-         "sharpness": "42",
+         "sharpness": "50",
          "autoExposure": true
       },
       "pipelineSettings": {
          "toggles": [
             false,
-            true,
+            false,
             false,
             false,
             false
@@ -21,8 +21,8 @@
          "apriltag2D": {
             "family": "16h5",
             "nthreads": 1,
-            "quadDecimate": 1.0,
-            "quadBlur": 0.0,
+            "quadDecimate": 1,
+            "quadBlur": 0,
             "refineEdges": true,
             "refineDecode": false,
             "refinePose": false,
@@ -32,8 +32,8 @@
          "apriltag3D": {
             "family": "16h5",
             "nthreads": 1,
-            "quadDecimate": 1.0,
-            "quadBlur": 0.0,
+            "quadDecimate": 1,
+            "quadBlur": 0,
             "refineEdges": true,
             "refineDecode": false,
             "refinePose": false,
@@ -42,19 +42,41 @@
             "fov": 70
          },
          "gamePieceGeo": {
-            "lowerPurple": [110, 150, 150],
-            "upperPurple": [160, 270, 270],
+            "lowerPurple": [
+               110,
+               150,
+               150
+            ],
+            "upperPurple": [
+               160,
+               270,
+               270
+            ],
             "arbituaryValueCube": 0.09,
-            "lowerYellow": [110, 150, 150],
-            "upperYellow": [160, 270, 270],
+            "lowerYellow": [
+               110,
+               150,
+               150
+            ],
+            "upperYellow": [
+               160,
+               270,
+               270
+            ],
             "arbituaryValueCone": 0.09
          },
-         "gamePieceML": {
-
-         },
+         "gamePieceML": {},
          "retroreflective": {
-            "lowerGreen": [0, 0, 0],
-            "upperGreen": [0, 0, 0],
+            "lowerGreen": [
+               0,
+               0,
+               0
+            ],
+            "upperGreen": [
+               0,
+               0,
+               0
+            ],
             "lightOn": true
          }
       }

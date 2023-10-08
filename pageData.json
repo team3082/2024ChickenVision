@@ -1,6 +1,11 @@
 {
    "currentCamera": 0,
-   "currentSettingsPage": 0,
-   "currentCameraSettingsPage": 0,
-   "currentPipelineSettingsPage": 0
+   "currentSettingsPage": 1,
+   "currentPipelineDropdowns": [
+      false,
+      false,
+      false,
+      false,
+      false
+   ]
 }
