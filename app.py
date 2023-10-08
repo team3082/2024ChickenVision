@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response, request
 from camera import Camera
+import camera
 from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
 import json
@@ -74,6 +75,11 @@ def getSettings():
         settings.write(data)
         settings.close()
         return "good"
+
+@app.route('/available_feeds')
+def available_feeds():
+    data = json.dumps({"data": [camera.getAvailableCameraIndexes()]})
+    return data
 
 @app.route('/video_feed')
 def video_feed():

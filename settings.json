@@ -1,20 +1,14 @@
 {
    "cam0": {
       "cameraSettings": {
-         "connectVerbose": 1,
-         "brightness": 50,
-         "contrast": 32,
-         "saturation": 64,
-         "hue": 50,
-         "whiteBalanceAutomatic": true,
-         "gamma": 120,
-         "powerLineFrequency": false,
-         "whiteBalanceTemperature": 4600,
-         "sharpness": 42,
-         "backlightCompensation": 1,
-         "autoExposure": true,
-         "exposureTimeAbsolute": 12,
-         "exposureDynamicFramerate": true
+         "connectVerbose": "1",
+         "brightness": "50",
+         "contrast": "50",
+         "saturation": "50",
+         "hue": "50",
+         "gamma": "120",
+         "sharpness": "42",
+         "autoExposure": true
       },
       "pipelineSettings": {
          "toggles": [

@@ -37,18 +37,98 @@ async function switchSettingsPage(index) {
     }
 }
 
-// TO DO
-function loadCameraSettings() {
-
+async function loadCameraSettings() {
+    let pageDataJSON = await getPageDataJSON()
+    let settingsJSON = await getSettingsJSON()
+    let currentCamera = pageDataJSON["currentCamera"];
+    let cam = "cam" + currentCamera.toString();
+    setCameraSettings(settingsJSON[cam]["cameraSettings"]);
 }
-function setCameraSettings() {
+function setCameraSettings(values) {
+    const connectVerbose = document.getElementById("connectVerbose");
+    const brightness = document.getElementById("brightness");
+    const contrast = document.getElementById("contrast");
+    const saturation = document.getElementById("saturation");
+    const hue = document.getElementById("hue");
+    const gamma = document.getElementById("gamma");
+    const sharpness = document.getElementById("sharpness");
+    const autoExposure = document.getElementById("autoExposure");
 
+    connectVerbose.value = values["connectVerbose"]
+    brightness.value = values["brightness"]
+    contrast.value = values["contrast"]
+    saturation.value = values["saturation"]
+    hue.value = values["hue"]
+    gamma.value = values["gamma"]
+    sharpness.value = values["sharpness"]
+    autoExposure.checked = values["autoExposure"]
+
+    const connectVerboseVal = document.getElementById("connectVerboseVal");
+    const brightnessVal = document.getElementById("brightnessVal");
+    const contrastVal = document.getElementById("contrastVal");
+    const saturationVal = document.getElementById("saturationVal");
+    const hueVal = document.getElementById("hueVal");
+    const gammaVal = document.getElementById("gammaVal");
+    const sharpnessVal = document.getElementById("sharpnessVal");
+
+    connectVerboseVal.innerHTML = connectVerbose.value
+    brightnessVal.innerHTML = brightness.value
+    contrastVal.innerHTML = contrast.value
+    saturationVal.innerHTML = saturation.value
+    hueVal.innerHTML = hue.value
+    gammaVal.innerHTML = gamma.value
+    sharpnessVal.innerHTML = sharpness.value
+
+    connectVerbose.addEventListener('click', async function() {await updateCameraSettings()})
+    brightness.addEventListener('click', async function() {await updateCameraSettings()})
+    contrast.addEventListener('click', async function() {await updateCameraSettings()})
+    saturation.addEventListener('click', async function() {await updateCameraSettings()})
+    hue.addEventListener('click', async function() {await updateCameraSettings()})
+    gamma.addEventListener('click', async function() {await updateCameraSettings()})
+    sharpness.addEventListener('click', async function() {await updateCameraSettings()})
+    autoExposure.addEventListener('click', async function() {await updateCameraSettings()})
 }
-function updateCameraSettings() {
+async function updateCameraSettings() {
+    const connectVerbose = document.getElementById("connectVerbose");
+    const brightness = document.getElementById("brightness");
+    const contrast = document.getElementById("contrast");
+    const saturation = document.getElementById("saturation");
+    const hue = document.getElementById("hue");
+    const gamma = document.getElementById("gamma");
+    const sharpness = document.getElementById("sharpness");
+    const autoExposure = document.getElementById("autoExposure");
 
+    let pageDataJSON = await getPageDataJSON()
+    let settingsJSON = await getSettingsJSON()
+
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["connectVerbose"] = connectVerbose.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["brightness"] = brightness.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["contrast"] = contrast.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["saturation"] = saturation.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["hue"] = hue.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["gamma"] = gamma.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["sharpness"] = sharpness.value
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["cameraSettings"]["autoExposure"] = autoExposure.checked
+
+    const connectVerboseVal = document.getElementById("connectVerboseVal");
+    const brightnessVal = document.getElementById("brightnessVal");
+    const contrastVal = document.getElementById("contrastVal");
+    const saturationVal = document.getElementById("saturationVal");
+    const hueVal = document.getElementById("hueVal");
+    const gammaVal = document.getElementById("gammaVal");
+    const sharpnessVal = document.getElementById("sharpnessVal");
+
+    connectVerboseVal.innerHTML = connectVerbose.value
+    brightnessVal.innerHTML = brightness.value
+    contrastVal.innerHTML = contrast.value
+    saturationVal.innerHTML = saturation.value
+    hueVal.innerHTML = hue.value
+    gammaVal.innerHTML = gamma.value
+    sharpnessVal.innerHTML = sharpness.value
+
+    updateSettingsJSON(settingsJSON)
 }
 
-// loads the settings for the pipeline given the current camera, and sets the html to the correct values
 async function loadPipelineSettings() {
     let pageDataJSON = await getPageDataJSON();
     let settingsJSON = await getSettingsJSON();

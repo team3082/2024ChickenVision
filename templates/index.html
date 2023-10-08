@@ -25,8 +25,15 @@
         </div>
       </div>
       <div class="cameraStreamContainer">
-        <header></header>
+        <header class="cameraStreamHeader"><p id="cameraStreamID">Camera Stream 0</p></header>
         <img id="bg" class="cameraFeed" src="{{ url_for('video_feed') }}">
+        <div class="dropdown">
+          <span>camera 0</span>
+          <div class="dropdown-content">
+            <button>camera 2</button>
+            <button>camera 4</button>
+          </div>
+        </div>
       </div>
     </div>
     <script type="module" src="{{ url_for('static', filename='js/index.js') }}">
