@@ -18,29 +18,3 @@
     <h3>Retroreflective Tape</h3>
     <input type="checkbox" id="gamePieceMLToggle"/>
 </div>
-<script>
-    const apriltag2Toggle = document.getElementById("apriltag2Toggle");
-    const apriltag3Toggle = document.getElementById("apriltag3Toggle");
-    const gamePieceGeoToggle = document.getElementById("gamePieceGeoToggle");
-    const gamePieceMLToggle = document.getElementById("gamePieceMLToggle");
-    const retroReflectiveToggle = document.getElementById("gamePieceMLToggle");
-    
-    function loadCurrentToggles() {
-        fetch('pageData.json')
-            .then(response => response.json())
-            .then(json => {
-                setToggles(json["currentPipelineSettingsPage"]["toggles"])
-            })
-    }
-    
-    function setToggles(toggles) {
-        console.log(toggles)
-        apriltag2Toggle.checked = toggles[0]
-        apriltag3Toggle.checked = toggles[1]
-        gamePieceGeoToggle.checked = toggles[2]
-        gamePieceMLToggle.checked = toggles[3]
-        retroReflectiveToggle.checked = toggles[4]
-    }
-    
-    loadCurrentToggles()
-</script>

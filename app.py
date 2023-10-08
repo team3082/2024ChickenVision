@@ -13,8 +13,12 @@ def index():
 def button():
     return "baller"
 
-def gen(index):
-    cap = Camera(index)
+def gen():
+    with open("pageData.json", "r") as pageData:
+        data = json.loads(pageData.read())
+        camIndex = data["currentCamera"]
+    print(camIndex)
+    cap = Camera(camIndex)
     cap.getCalibrationInfo()
     
     apriltag3 = ApriltagDetector3D(camParams=cap.params)
@@ -37,15 +41,27 @@ def gen(index):
 def getPageData():
     if request.method == 'GET':
         return open("pageData.json", "r")
+    if request.method == "POST":
+        data = request.json
+        settings = open("pageData.json", "w")
+        settings.write(data)
+        settings.close()
+        return "good"
 
-@app.route('/video_feed_0')
-def video_feed_0():
-    return Response(gen(0),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/settings.json', methods = ['GET', 'POST', 'DELETE'])
+def getSettings():
+    if request.method == 'GET':
+        return open("settings.json", "r")
+    if request.method == "POST":
+        data = request.json
+        settings = open("settings.json", "w")
+        settings.write(data)
+        settings.close()
+        return "good"
 
-@app.route('/video_feed/<cam_id>')
-def video_feed(cam_id):
-    return Response(gen(cam_id),
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
 @app.route('/pipelineSettings.json')

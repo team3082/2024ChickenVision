@@ -1,12 +1,13 @@
-// camIndex {
-    // pipelines {
-        // apriltag2D [bool, {settings}], 
-        // apriltag3D [bool, {settings}],  
-        // gamePieceGeo [bool, {settings}], 
-        // gamePieceML [bool, {settings}], 
-        // retroreflective [bool, {settings}], 
-    // },
-    // settings {
-        // 
-    // },
-    // params [true, [fx, fy, cx, cy]]}
+{"cam0": {
+    "cameraSettings": {
+
+    },
+    "pipelineSettings": {
+        "toggles": [true, false, false, false, false],
+        "apriltag2D": {},
+        "apriltag3D": {},
+        "gamePieceGeo": {},
+        "gamePieceML": {},
+        "retroreflective": {}
+    }
+}}
