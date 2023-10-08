@@ -1,0 +1,12 @@
+// camIndex {
+    // pipelines {
+        // apriltag2D [bool, {settings}], 
+        // apriltag3D [bool, {settings}],  
+        // gamePieceGeo [bool, {settings}], 
+        // gamePieceML [bool, {settings}], 
+        // retroreflective [bool, {settings}], 
+    // },
+    // settings {
+        // 
+    // },
+    // params [true, [fx, fy, cx, cy]]}

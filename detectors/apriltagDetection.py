@@ -95,5 +95,5 @@ class ApriltagDetector3D(ApriltagDetector):
         self.detectTags3D()
         if self.tags[1] != []:
             labeledFrame = self.renderTags3D(labeledFrame)
-            self.printTagData3D()
+            # self.printTagData3D()
         return labeledFrame

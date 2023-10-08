@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>2024ChickenVision</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+  </head>
+  <body>
+    <header class="header">
+      <div class="corner"><img src="{{ url_for('static', filename='assets/cbp.svg') }}" /></div>
+      <h1>2024ChickenVision</h1>
+    </header>
+    
+    <div class="contentContainer">
+      <div class="settingsContainer">
+        <nav class="settingsNavBar">
+          <button id="cameraSettings">Camera Settings</button>
+          <div style="width: 0.5%; background-color: #252525;"></div>
+          <button id="pipelineSettings">Pipeline Settings</button>
+          <div style="width: 0.5%; background-color: #252525;"></div>
+          <button id="settings">Settings</button>
+        </nav>
+        <div class="settingsContent" id="settingsContainer">
+
+        </div>
+      </div>
+      <div class="cameraStreamContainer">
+        <header></header>
+        <img id="bg" class="cameraFeed" src="{{ url_for('video_feed_0') }}">
+      </div>
+    </div>
+    <script type="module" src="{{ url_for('static', filename='js/index.js') }}">
+    </script>
+  </body>
+</html>
