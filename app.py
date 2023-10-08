@@ -4,6 +4,7 @@ from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
 import json
 app = Flask(__name__)
+app.config['SERVER_NAME'] = 'chickenvision:8000'
 
 @app.route('/')
 def index():
@@ -57,7 +58,7 @@ def getPageData():
     if request.method == 'GET':
         return open("pageData.json", "r")
     if request.method == "POST":
-        data = json.dumps(request.json)
+        data = json.dumps(request.json, indent=3)
         settings = open("pageData.json", "w")
         settings.write(data)
         settings.close()
@@ -68,7 +69,7 @@ def getSettings():
     if request.method == 'GET':
         return open("settings.json", "r")
     if request.method == "POST":
-        data = json.dumps(request.json)
+        data = json.dumps(request.json, indent=3)
         settings = open("settings.json", "w")
         settings.write(data)
         settings.close()
@@ -79,14 +80,20 @@ def video_feed():
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
+@app.route('/cameraSettings.json')
+def cameraSettingsTemplate():
+    html = open('templates/settings/cameraSettings.html', 'r')
+    return json.dumps({"data": html.read()})    
+
 @app.route('/pipelineSettings.json')
 def pipelineSettingsTemplate():
     html = open('templates/settings/pipelineSettings.html', 'r')
     return json.dumps({"data": html.read()})
     
-@app.route('/settings.html')
+@app.route('/settings.json')
 def settingsTemplate():
-    return {"data": open('templates/settings/settings.html', 'r')}
+    html = open('templates/settings/settings.html', 'r')
+    return json.dumps({"data": html.read()})
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)

@@ -8,10 +8,15 @@ async function loadCurrentPage() {
     let pageIndex = pageDataJSON["currentSettingsPage"]
     switchSettingsPage(pageIndex)
 }
-function switchSettingsPage(index) {
+async function switchSettingsPage(index) {
     switch(index) {
         case 0: 
-            settingsContainer.innerHTML = '<p>Camera Settings</p>';
+            fetch('cameraSettings.json')
+                .then(response => response.json())
+                .then(json => {
+                settingsContainer.innerHTML = json["data"];
+            });
+            loadCameraSettings()
             break;
         case 1:
             fetch('pipelineSettings.json')
@@ -24,6 +29,11 @@ function switchSettingsPage(index) {
         case 2:
             settingsContainer.innerHTML = '<p>Settings</p>';
             break;
+    }
+    let pageDataJSON = await getPageDataJSON();
+    if (pageDataJSON["currentSettingsPage"] != index) {
+        pageDataJSON["currentSettingsPage"] = index;
+        updatePageDataJSON(pageDataJSON)
     }
 }
 
@@ -40,17 +50,6 @@ function updateCameraSettings() {
 
 // loads the settings for the pipeline given the current camera, and sets the html to the correct values
 async function loadPipelineSettings() {
-    // fetch('pageData.json')
-    //     .then(response => response.json())
-    //     .then(json => {
-    //         let currentCamera = json["currentCamera"];
-    //         fetch('settings.json')
-    //             .then(response => response.json())
-    //             .then(json => {
-    //                 let camera = "cam" + currentCamera.toString()
-    //                 setPipelineSettings(json[camera]["pipelineSettings"]["toggles"]);
-    //             })
-    //     })
     let pageDataJSON = await getPageDataJSON();
     let settingsJSON = await getSettingsJSON();
     let currentCamera = pageDataJSON["currentCamera"];
@@ -63,6 +62,7 @@ function setPipelineSettings(toggles) {
     const gamePieceGeoToggle = document.getElementById("gamePieceGeoToggle");
     const gamePieceMLToggle = document.getElementById("gamePieceMLToggle");
     const retroReflectiveToggle = document.getElementById("gamePieceMLToggle");
+
     apriltag2Toggle.checked = toggles[0]
     apriltag3Toggle.checked = toggles[1]
     gamePieceGeoToggle.checked = toggles[2]
@@ -75,7 +75,6 @@ function setPipelineSettings(toggles) {
     gamePieceMLToggle.addEventListener('click', async function() {await updatePipelineSettings()});
     retroReflectiveToggle.addEventListener('click', async function() {await updatePipelineSettings()});
 }
-// TO DO
 async function updatePipelineSettings() {
     console.log("updating")
 
@@ -108,17 +107,21 @@ function updateSettings() {
 
 }
 
-// NEEDS FIX
 async function getPageDataJSON() {
     let response = await fetch('pageData.json')
     let json = await response.json()
     return json
 }
 async function updatePageDataJSON(pageDataJSON) {
-    let response = await fetch('pageData.json', {method: "POST", body: JSON.stringify(pageDataJSON)})
+    let response = await fetch('pageData.json', {
+        method: "POST", 
+        body: JSON.stringify(pageDataJSON), 
+        headers: {
+        "Content-Type": "application/json"
+        }
+    })
 }
 
-// NEEDS FIX
 async function getSettingsJSON(settingsJSON) {
     let response = await fetch('settings.json')
     let json = await response.json()
@@ -132,7 +135,6 @@ async function updateSettingsJSON(settingsJSON) {
             "Content-Type": "application/json"
         }
     })
-    console.log(response)
 }
 
 loadCurrentPage()
