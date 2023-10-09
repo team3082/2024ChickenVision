@@ -19,15 +19,15 @@
             false
          ],
          "apriltag2D": {
-            "family": "16h5",
-            "nthreads": 1,
-            "quadDecimate": 1,
-            "quadBlur": 0,
+            "family": "1",
+            "nthreads": "1",
+            "quadDecimate": "1",
+            "quadBlur": "0",
             "refineEdges": true,
             "refineDecode": false,
             "refinePose": false,
             "quadContours": false,
-            "decisionMargin": 50
+            "decisionMargin": "50"
          },
          "apriltag3D": {
             "family": "16h5",

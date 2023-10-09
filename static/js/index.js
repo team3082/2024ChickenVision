@@ -193,24 +193,85 @@ async function updatePipelineSettings() {
 
 // Apriltag 2D Settings
 async function loadApriltag2Settings() {
+    console.log("loadApriltag2D")
     const apriltag2Content = document.getElementById("apriltag2Content");
 
-    let data = await fetch("apriltag2Settings.json")
-    let dataJSON = await data.json()
-    let dataHTML = await dataJSON["data"]
-
     if (apriltag2Content.innerHTML == "") {
+        let data = await fetch("apriltag2Settings.json")
+        let dataJSON = await data.json();
+        let dataHTML = await dataJSON["data"];
         apriltag2Content.innerHTML = dataHTML;
+
+        let pageDataJSON = await getPageDataJSON();
+        let settingsJSON = await getSettingsJSON();
+        let currentCamera = pageDataJSON["currentCamera"];
+        let cam = "cam" + currentCamera.toString();
+        setApriltag2Settings(settingsJSON[cam]["pipelineSettings"]["apriltag2D"]);
     }
     else {
         apriltag2Content.innerHTML = "";
-    }
+    }   
 }
 function setApriltag2Settings(values) {
+    console.log("setApriltag2D")
+    const apriltag2Family = document.getElementById("apriltag2Family");
+    const apriltag2Nthreads = document.getElementById("apriltag2Nthreads");
+    const apriltag2QuadDecimate = document.getElementById("apriltag2QuadDecimate");
+    const apriltag2QuadBlur = document.getElementById("apriltag2QuadBlur");
+    const apriltag2RefineEdges = document.getElementById("apriltag2RefineEdges");
+    const apriltag2RefineDecode = document.getElementById("apriltag2RefineDecode");
+    const apriltag2RefinePose = document.getElementById("apriltag2RefinePose");
+    const apriltag2QuadContours = document.getElementById("apriltag2QuadContours");
+    const apriltag2DecisionMargin = document.getElementById("apriltag2DecisionMargin");
+    
+    apriltag2Family.value = values["family"];
+    apriltag2Nthreads.value = values["nthreads"];
+    apriltag2QuadDecimate.value = values["quadDecimate"];
+    apriltag2QuadBlur.value = values["quadBlur"];
+    apriltag2RefineEdges.checked = values["refineEdges"];
+    apriltag2RefineDecode.checked = values["refineDecode"];
+    apriltag2RefinePose.checked = values["refinePose"];
+    apriltag2QuadContours.checked = values["quadContours"];
+    apriltag2DecisionMargin.value = values["decisionMargin"];
 
+    apriltag2Family.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2Nthreads.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2QuadDecimate.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2QuadBlur.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2RefineEdges.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2RefineDecode.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2RefinePose.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2QuadContours.addEventListener('click', async function() {await updateApriltag2Settings()});
+    apriltag2DecisionMargin.addEventListener('click', async function() {await updateApriltag2Settings()});
 }
 async function updateApriltag2Settings() {
+    console.log("updateApriltag2D")
+    const apriltag2Family = document.getElementById("apriltag2Family");
+    const apriltag2Nthreads = document.getElementById("apriltag2Nthreads");
+    const apriltag2QuadDecimate = document.getElementById("apriltag2QuadDecimate");
+    const apriltag2QuadBlur = document.getElementById("apriltag2QuadBlur");
+    const apriltag2RefineEdges = document.getElementById("apriltag2RefineEdges");
+    const apriltag2RefineDecode = document.getElementById("apriltag2RefineDecode");
+    const apriltag2RefinePose = document.getElementById("apriltag2RefinePose");
+    const apriltag2QuadContours = document.getElementById("apriltag2QuadContours");
+    const apriltag2DecisionMargin = document.getElementById("apriltag2DecisionMargin");
 
+    let pageDataJSON = await getPageDataJSON();
+    let settingsJSON = await getSettingsJSON();
+    let apriltag2Settings = settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["apriltag2D"];
+
+    apriltag2Settings["family"] = apriltag2Family.value;
+    apriltag2Settings["nthreads"] = apriltag2Nthreads.value;
+    apriltag2Settings["quadDecimate"] = apriltag2QuadDecimate.value;
+    apriltag2Settings["quadBlur"] = apriltag2QuadBlur.value;
+    apriltag2Settings["refineEdges"] = apriltag2RefineEdges.checked;
+    apriltag2Settings["refineDecode"] = apriltag2RefineDecode.checked;
+    apriltag2Settings["refinePose"] = apriltag2RefinePose.checked;
+    apriltag2Settings["quadContours"] = apriltag2QuadContours.checked;
+    apriltag2Settings["decisionMargin"] = apriltag2DecisionMargin.value;
+
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["apriltag2D"] = apriltag2Settings;
+    updateSettingsJSON(settingsJSON);
 }
 
 // Apriltag 3D Settings
