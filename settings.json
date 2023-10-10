@@ -12,8 +12,8 @@
       },
       "pipelineSettings": {
          "toggles": [
-            true,
-            true,
+            false,
+            false,
             false,
             false,
             false
@@ -27,43 +27,43 @@
             "refineDecode": false,
             "refinePose": false,
             "quadContours": false,
-            "decisionMargin": "50"
+            "decisionMargin": "60"
          },
          "apriltag3D": {
             "family": "1",
-            "nthreads": "1",
-            "quadDecimate": 3.8,
-            "quadBlur": 0.8,
+            "nthreads": "4",
+            "quadDecimate": 0.7,
+            "quadBlur": 0,
             "refineEdges": true,
             "refineDecode": false,
             "refinePose": false,
             "quadContours": false,
-            "decisionMargin": "50",
+            "decisionMargin": "51",
             "fov": "70"
          },
          "gamePieceGeo": {
             "lowerPurple": [
-               110,
-               150,
-               150
+               "110",
+               "110",
+               "150"
             ],
             "upperPurple": [
-               160,
-               270,
-               270
+               "190",
+               "270",
+               "270"
             ],
-            "arbituaryValueCube": 0.09,
+            "arbituaryValueCube": "100",
             "lowerYellow": [
-               110,
-               150,
-               150
+               "0",
+               "48",
+               "45"
             ],
             "upperYellow": [
-               160,
-               270,
-               270
+               "60",
+               "230",
+               "233"
             ],
-            "arbituaryValueCone": 0.09
+            "arbituaryValueCone": "100"
          },
          "gamePieceML": {},
          "retroreflective": {

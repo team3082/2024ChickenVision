@@ -131,6 +131,16 @@ async function updateCameraSettings() {
     updateSettingsJSON(settingsJSON)
 }
 
+async function loadCurrentCamera() {
+
+}
+function setCurrentCamera() {
+    
+}
+async function updateCurrentCamera() {
+
+}
+
 // Pipeline Settings
 async function loadPipelineSettings() {
     let pageDataJSON = await getPageDataJSON();

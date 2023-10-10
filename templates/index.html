@@ -25,13 +25,12 @@
         </div>
       </div>
       <div class="cameraStreamContainer">
-        <header class="cameraStreamHeader"><p id="cameraStreamID">Camera Stream 0</p></header>
+        <header class="cameraStreamHeader"><p id="cameraStreamID">Camera Stream</p></header>
         <img id="bg" class="cameraFeed" src="{{ url_for('video_feed') }}">
-        <div class="dropdown">
-          <span>camera 0</span>
-          <div class="dropdown-content">
-            <button>camera 2</button>
-            <button>camera 4</button>
+        <div class="dropdown" id="currentCameraSelector">
+          <span id="currentCameraLabel">camera 0</span>
+          <div class="dropdown-content" id="cameraSelectorDropdown">
+            
           </div>
         </div>
       </div>

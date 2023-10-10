@@ -51,7 +51,7 @@ class ApriltagDetector2D(ApriltagDetector):
         return renderedFrame
 
 class ApriltagDetector3D(ApriltagDetector):
-    def __init__(self, options: apriltag.DetectorOptions = apriltag.DetectorOptions(families="tag16h5", nthreads=4), decisionMargin: int = 30, tagSize: float = 1.0, camParams: tuple() = (765.00, 764.18, 393.72, 304.66)):
+    def __init__(self, options: apriltag.DetectorOptions = apriltag.DetectorOptions(families="tag16h5", nthreads=4), decisionMargin: int = 30, tagSize: float = 1.0, camParams: tuple() = (765.00, 764.18, 393.72, 304.66), fov:float = 70):
         self.options = options
         self.detector = apriltag.Detector(options)
         self.decisionMargin = decisionMargin
@@ -60,9 +60,13 @@ class ApriltagDetector3D(ApriltagDetector):
         self.tags = [None, [], [], []]
         self.camParams = camParams
         self.tagSize = tagSize
+        self.fov = fov
 
     def setCamParams(self, camParams):
         self.camParams = camParams
+        
+    def updateFov(self, fov: float):
+        self.fov = fov
 
     def detectTags3D(self):
         self.tags = [None, [], [], []]
@@ -71,9 +75,10 @@ class ApriltagDetector3D(ApriltagDetector):
             self.tags[0], dimg = self.detector.detect(self.frame, return_image=True)
             for i, tag in enumerate(self.tags[0]):
                 pose, e0, e1 = self.detector.detection_pose(tag, self.camParams, self.tagSize)
-                self.tags[1].append(pose)
-                self.tags[2].append(e0)
-                self.tags[3].append(e1)
+                if tag.decision_margin >= self.decisionMargin:
+                    self.tags[1].append(pose)
+                    self.tags[2].append(e0)
+                    self.tags[3].append(e1)
 
     def printTagData3D(self):
         for i in range(len(self.tags[0])):

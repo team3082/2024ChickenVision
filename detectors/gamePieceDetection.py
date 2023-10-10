@@ -11,6 +11,13 @@ class CubeDetector:
         # i dont rly know why it does what it does but it does what it does.
         self.arbituaryValue = arbituaryValue
         
+    def updatePurple(self, lowerPurple: np.ndarray, upperPurple: np.ndarray):
+        self.lowerPurple = lowerPurple
+        self.upperPurple = upperPurple
+    
+    def updateArbituaryValue(self, arbituaryValue: float):
+        self.arbituaryValue = arbituaryValue
+        
     def printcubeData(self):
         # printing out data to console for debugging
         for cube in self.cubes:
@@ -104,6 +111,14 @@ class ConeDetector:
         # i dont rly know why it does what it does but it does what it does.
         self.arbituaryValue = arbituaryValue
         
+    def updateYellow(self, lowerYellow: np.ndarray, upperYellow: np.ndarray):
+        self.lowerYellow = lowerYellow
+        self.upperYellow = upperYellow
+        None
+    
+    def updateArbituaryValue(self, arbituaryValue: float):
+        self.arbituaryValue = arbituaryValue
+    
     def printConeData(self):
         # printing out data to console for debugging
         for cone in self.cones:
@@ -150,6 +165,8 @@ class ConeDetector:
 
         # getting edges
         edges_img = cv2.Canny(smoothed_img, 100, 200)
+        print("showing")
+        cv2.imshow("yellowThresh", edges_img)
 
         # getting contours
         self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -181,6 +198,7 @@ class ConeDetector:
         self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     def update(self, labeledFrame, frame):
+        print("yo")
         self.getLatestFrame(frame)
         self.getContours()
         self.detectCones()

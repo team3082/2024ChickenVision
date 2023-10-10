@@ -20,7 +20,7 @@ def getAvailableCameraIndexes():
     return arr
 
 class Camera:
-    def __init__(self, cameraIndex: int = 0, resolution = [1280, 720]):
+    def __init__(self, cameraIndex: int = 0, resolution = [640, 480]):
         self.cameraIndex = cameraIndex
         self.cameraStream: cv2.VideoCapture = cv2.VideoCapture(cameraIndex)
         self.frame = None
