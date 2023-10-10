@@ -466,14 +466,14 @@ function setGamePieceGeoSettings(values) {
     upperPurpleH.value = values["upperPurple"][0];
     upperPurpleS.value = values["upperPurple"][1];
     upperPurpleV.value = values["upperPurple"][2];
-    arbituaryValueCube.value = values["arbituaryValueCube"] * 100;
+    arbituaryValueCube.value = values["arbituaryValueCube"];
     lowerYellowH.value = values["lowerYellow"][0];
     lowerYellowS.value = values["lowerYellow"][1];
     lowerYellowV.value = values["lowerYellow"][2];
     upperYellowH.value = values["upperYellow"][0];
     upperYellowS.value = values["upperYellow"][1];
     upperYellowV.value = values["upperYellow"][2];
-    arbituaryValueCone.value = values["arbituaryValueCone"] * 100;
+    arbituaryValueCone.value = values["arbituaryValueCone"];
 
     const lowerPurpleHVal = document.getElementById("lowerPurpleHVal");
     const lowerPurpleSVal = document.getElementById("lowerPurpleSVal");

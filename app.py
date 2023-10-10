@@ -8,7 +8,7 @@ import json
 import cv2
 import numpy as np
 app = Flask(__name__)
-app.config['SERVER_NAME'] = 'chickenvision:8000'
+app.config['SERVER_NAME'] = 'chickenvision.local:8000'
 
 # render main page template
 @app.route('/')
@@ -57,9 +57,9 @@ def runCameras():
     # availableCams = cameraClass.getAvailableCameraIndexes()
     availableCams = [0]
     cams = []
-    print(availableCams)
+    # print(availableCams)
     for cam in availableCams:
-        print(cam)
+        # print(cam)
         cams.append({
             "camIndex": cam,
             "cameraStream": Camera(cam),
@@ -71,83 +71,87 @@ def runCameras():
         cubeDetector = CubeDetector()
         coneDetector = ConeDetector()
     while True:
-        currentViewedCam = json.loads(open("pageData.json", "r").read())["currentCamera"]
+        currentViewedCamJSON = open("pageData.json", "r")
+        currentViewedCam = json.loads(currentViewedCamJSON.read())["currentCamera"]
+        currentViewedCamJSON.close()
         for cam in cams:
-            cam["cameraStream"].getCalibrationInfo()
-            cam["apriltag3D"].setCamParams(cam["cameraStream"].params)
-            
-            frame = cam["cameraStream"].getLatestFrame()
-            labeledFrame = frame
+            try:
+                cam["cameraStream"].getCalibrationInfo()
+                cam["apriltag3D"].setCamParams(cam["cameraStream"].params)
 
-            cameraSettingsJSON = open("settings.json", "r")
-            cameraSettings = json.loads(cameraSettingsJSON.read())
-            # print(cameraSettings)
-            cameraSettingsDict = cameraSettings["cam" + str(cam["camIndex"])]
-            cameraSettingsJSON.close()
-            
-            if cameraSettingsDict["pipelineSettings"]["toggles"][0]:
-                optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag2D"]
-                options = DetectorOptions(
-                    families="tag16h5",
-                    nthreads=int(optionsDict["nthreads"]),
-                    quad_decimate=optionsDict["quadDecimate"],
-                    quad_blur=optionsDict["quadBlur"],
-                    refine_edges=optionsDict["refineEdges"],
-                    refine_decode=optionsDict["refineDecode"],
-                    refine_pose=optionsDict["refinePose"],
-                    quad_contours=optionsDict["quadContours"]
-                    )
-                cam["apriltag2D"].updateOptions(options)
-                cam["apriltag2D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
-                labeledFrame = cam["apriltag2D"].update(labeledFrame, frame)
+                frame = cam["cameraStream"].getLatestFrame()
+                labeledFrame = frame
+
+                cameraSettingsJSON = open("settings.json", "r")
+                cameraSettings = json.loads(cameraSettingsJSON.read())
+                # print(cameraSettings)
+                cameraSettingsDict = cameraSettings["cam" + str(cam["camIndex"])]
+                cameraSettingsJSON.close()
                 
-            if cameraSettingsDict["pipelineSettings"]["toggles"][1]:
-                optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag3D"]
-                options = DetectorOptions(
-                    families="tag16h5",
-                    nthreads=int(optionsDict["nthreads"]),
-                    quad_decimate=optionsDict["quadDecimate"],
-                    quad_blur=optionsDict["quadBlur"],
-                    refine_edges=optionsDict["refineEdges"],
-                    refine_decode=optionsDict["refineDecode"],
-                    refine_pose=optionsDict["refinePose"],
-                    quad_contours=optionsDict["quadContours"]
-                    )
-                cam["apriltag3D"].updateOptions(options)
-                cam["apriltag3D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
-                cam["apriltag3D"].updateFov(optionsDict["fov"])
-                labeledFrame = cam["apriltag3D"].update(labeledFrame, frame)
+                if cameraSettingsDict["pipelineSettings"]["toggles"][0]:
+                    optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag2D"]
+                    options = DetectorOptions(
+                        families="tag16h5",
+                        nthreads=int(optionsDict["nthreads"]),
+                        quad_decimate=optionsDict["quadDecimate"],
+                        quad_blur=optionsDict["quadBlur"],
+                        refine_edges=optionsDict["refineEdges"],
+                        refine_decode=optionsDict["refineDecode"],
+                        refine_pose=optionsDict["refinePose"],
+                        quad_contours=optionsDict["quadContours"]
+                        )
+                    cam["apriltag2D"].updateOptions(options)
+                    cam["apriltag2D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
+                    labeledFrame = cam["apriltag2D"].update(labeledFrame, frame)
+                    
+                if cameraSettingsDict["pipelineSettings"]["toggles"][1]:
+                    optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag3D"]
+                    options = DetectorOptions(
+                        families="tag16h5",
+                        nthreads=int(optionsDict["nthreads"]),
+                        quad_decimate=optionsDict["quadDecimate"],
+                        quad_blur=optionsDict["quadBlur"],
+                        refine_edges=optionsDict["refineEdges"],
+                        refine_decode=optionsDict["refineDecode"],
+                        refine_pose=optionsDict["refinePose"],
+                        quad_contours=optionsDict["quadContours"]
+                        )
+                    cam["apriltag3D"].updateOptions(options)
+                    cam["apriltag3D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
+                    cam["apriltag3D"].updateFov(optionsDict["fov"])
+                    labeledFrame = cam["apriltag3D"].update(labeledFrame, frame)
+                    
+                if cameraSettingsDict["pipelineSettings"]["toggles"][2]:
+                    optionsDict = cameraSettingsDict["pipelineSettings"]["gamePieceGeo"]
+                    # print(0)
+                    lowerYellow = np.array([int(optionsDict["lowerYellow"][0]), int(optionsDict["lowerYellow"][1]), int(optionsDict["lowerYellow"][2])])
+                    upperYellow = np.array([int(optionsDict["upperYellow"][0]), int(optionsDict["upperYellow"][1]), int(optionsDict["upperYellow"][2])])
+                    coneDetector.updateYellow(lowerYellow, upperYellow)
+                    coneDetector.updateArbituaryValue(float(optionsDict["arbituaryValueCone"]) / 100)
+                    # labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
+
+                    # print(1)
+                    lowerPurple = np.array([int(optionsDict["lowerPurple"][0]), int(optionsDict["lowerPurple"][1]), int(optionsDict["lowerPurple"][2])])
+                    upperPurple = np.array([int(optionsDict["upperPurple"][0]), int(optionsDict["upperPurple"][1]), int(optionsDict["upperPurple"][2])])
+                    cubeDetector.updatePurple(lowerPurple, upperPurple)
+                    cubeDetector.updateArbituaryValue(float(optionsDict["arbituaryValueCube"]) / 100)
+                    # labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
+                    # print(cam["gamePieceGeoCube"])
+                    labeledFrame = cubeDetector.update(labeledFrame, frame)
+                    labeledFrame = coneDetector.update(labeledFrame, frame)
+                    # print(2)
+
+                # cam["cameraStream"].renderCameraStream(labeledFrame)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
                 
-            if cameraSettingsDict["pipelineSettings"]["toggles"][2]:
-                optionsDict = cameraSettingsDict["pipelineSettings"]["gamePieceGeo"]
-                
-                print(0)
-                lowerYellow = np.array([int(optionsDict["lowerYellow"][0]), int(optionsDict["lowerYellow"][1]), int(optionsDict["lowerYellow"][2])])
-                upperYellow = np.array([int(optionsDict["upperYellow"][0]), int(optionsDict["upperYellow"][1]), int(optionsDict["upperYellow"][2])])
-                coneDetector.updateYellow(lowerYellow, upperYellow)
-                coneDetector.updateArbituaryValue(float(optionsDict["arbituaryValueCone"]))
-                # labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
-                
-                print(1)
-                lowerPurple = np.array([int(optionsDict["lowerPurple"][0]), int(optionsDict["lowerPurple"][1]), int(optionsDict["lowerPurple"][2])])
-                upperPurple = np.array([int(optionsDict["upperPurple"][0]), int(optionsDict["upperPurple"][1]), int(optionsDict["upperPurple"][2])])
-                cubeDetector.updatePurple(lowerPurple, upperPurple)
-                cubeDetector.updateArbituaryValue(float(optionsDict["arbituaryValueCube"]))
-                # labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
-                # print(cam["gamePieceGeoCube"])
-                labeledFrame = cubeDetector.update(labeledFrame, frame)
-                labeledFrame = coneDetector.update(labeledFrame, frame)
-                print(2)
-            
-            # cam["cameraStream"].renderCameraStream(labeledFrame)
-            
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            
-            if cam["camIndex"] == currentViewedCam:
-                frameBytes = cam["cameraStream"].convertFrameToBytes(labeledFrame)
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
+                if cam["camIndex"] == currentViewedCam:
+                    frameBytes = cam["cameraStream"].convertFrameToBytes(labeledFrame)
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
+            except:
+                None
                 
 # GET/POST JSON STORAGE
 @app.route('/pageData.json', methods = ['GET', 'POST'])

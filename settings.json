@@ -12,58 +12,58 @@
       },
       "pipelineSettings": {
          "toggles": [
-            false,
-            false,
-            false,
+            true,
+            true,
+            true,
             false,
             false
          ],
          "apriltag2D": {
             "family": "1",
-            "nthreads": "1",
+            "nthreads": "2",
             "quadDecimate": 0.2,
             "quadBlur": 0,
             "refineEdges": true,
             "refineDecode": false,
             "refinePose": false,
             "quadContours": false,
-            "decisionMargin": "60"
+            "decisionMargin": "50"
          },
          "apriltag3D": {
             "family": "1",
             "nthreads": "4",
-            "quadDecimate": 0.7,
+            "quadDecimate": 0.2,
             "quadBlur": 0,
             "refineEdges": true,
             "refineDecode": false,
-            "refinePose": false,
+            "refinePose": true,
             "quadContours": false,
-            "decisionMargin": "51",
+            "decisionMargin": "52",
             "fov": "70"
          },
          "gamePieceGeo": {
             "lowerPurple": [
-               "110",
-               "110",
-               "150"
+               "122",
+               "125",
+               "118"
             ],
             "upperPurple": [
-               "190",
-               "270",
-               "270"
+               "168",
+               "248",
+               "253"
             ],
-            "arbituaryValueCube": "100",
+            "arbituaryValueCube": "8",
             "lowerYellow": [
-               "0",
-               "48",
-               "45"
+               "17",
+               "55",
+               "47"
             ],
             "upperYellow": [
-               "60",
-               "230",
-               "233"
+               "82",
+               "152",
+               "202"
             ],
-            "arbituaryValueCone": "100"
+            "arbituaryValueCone": "8"
          },
          "gamePieceML": {},
          "retroreflective": {

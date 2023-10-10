@@ -221,13 +221,13 @@ body {
     appearance: none;
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
+    background: #299eff; /* Green background */
     cursor: pointer; /* Cursor on hover */
   }
   
 .slider input::-moz-range-thumb {
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
+    background: #299eff; /* Green background */
     cursor: pointer; /* Cursor on hover */
   }

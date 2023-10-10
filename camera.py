@@ -46,7 +46,7 @@ class Camera:
             self.dist = cv2.Mat(np.array(dist, dtype=np.float32))
             self.params = tuple(calibDataDict['params'])
 
-            print("calibration data found")
+            # print("calibration data found")
         
         except:
             print("no calibration data found")

@@ -165,8 +165,6 @@ class ConeDetector:
 
         # getting edges
         edges_img = cv2.Canny(smoothed_img, 100, 200)
-        print("showing")
-        cv2.imshow("yellowThresh", edges_img)
 
         # getting contours
         self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -198,7 +196,6 @@ class ConeDetector:
         self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     def update(self, labeledFrame, frame):
-        print("yo")
         self.getLatestFrame(frame)
         self.getContours()
         self.detectCones()
