@@ -226,13 +226,25 @@ function setApriltag2Settings(values) {
     
     apriltag2Family.value = values["family"];
     apriltag2Nthreads.value = values["nthreads"];
-    apriltag2QuadDecimate.value = values["quadDecimate"];
-    apriltag2QuadBlur.value = values["quadBlur"];
+    apriltag2QuadDecimate.value = values["quadDecimate"] * 10;
+    apriltag2QuadBlur.value = values["quadBlur"] * 10;
     apriltag2RefineEdges.checked = values["refineEdges"];
     apriltag2RefineDecode.checked = values["refineDecode"];
     apriltag2RefinePose.checked = values["refinePose"];
     apriltag2QuadContours.checked = values["quadContours"];
     apriltag2DecisionMargin.value = values["decisionMargin"];
+
+    const apriltag2FamilyVal = document.getElementById("apriltag2FamilyVal");
+    const apriltag2NthreadsVal = document.getElementById("apriltag2NthreadsVal");
+    const apriltag2QuadDecimateVal = document.getElementById("apriltag2QuadDecimateVal");
+    const apriltag2QuadBlurVal = document.getElementById("apriltag2QuadBlurVal");
+    const apriltag2DecisionMarginVal = document.getElementById("apriltag2DecisionMarginVal");
+    
+    apriltag2FamilyVal.innerHTML = apriltag2Family.value;
+    apriltag2NthreadsVal.innerHTML = apriltag2Nthreads.value;
+    apriltag2QuadDecimateVal.innerHTML = apriltag2QuadDecimate.value / 10;
+    apriltag2QuadBlurVal.innerHTML = apriltag2QuadBlur.value / 10;
+    apriltag2DecisionMarginVal.innerHTML = apriltag2DecisionMargin.value;  
 
     apriltag2Family.addEventListener('click', async function() {await updateApriltag2Settings()});
     apriltag2Nthreads.addEventListener('click', async function() {await updateApriltag2Settings()});
@@ -262,13 +274,25 @@ async function updateApriltag2Settings() {
 
     apriltag2Settings["family"] = apriltag2Family.value;
     apriltag2Settings["nthreads"] = apriltag2Nthreads.value;
-    apriltag2Settings["quadDecimate"] = apriltag2QuadDecimate.value;
-    apriltag2Settings["quadBlur"] = apriltag2QuadBlur.value;
+    apriltag2Settings["quadDecimate"] = apriltag2QuadDecimate.value / 10;
+    apriltag2Settings["quadBlur"] = apriltag2QuadBlur.value / 10;
     apriltag2Settings["refineEdges"] = apriltag2RefineEdges.checked;
     apriltag2Settings["refineDecode"] = apriltag2RefineDecode.checked;
     apriltag2Settings["refinePose"] = apriltag2RefinePose.checked;
     apriltag2Settings["quadContours"] = apriltag2QuadContours.checked;
     apriltag2Settings["decisionMargin"] = apriltag2DecisionMargin.value;
+
+    const apriltag2FamilyVal = document.getElementById("apriltag2FamilyVal");
+    const apriltag2NthreadsVal = document.getElementById("apriltag2NthreadsVal");
+    const apriltag2QuadDecimateVal = document.getElementById("apriltag2QuadDecimateVal");
+    const apriltag2QuadBlurVal = document.getElementById("apriltag2QuadBlurVal");
+    const apriltag2DecisionMarginVal = document.getElementById("apriltag2DecisionMarginVal");
+    
+    apriltag2FamilyVal.innerHTML = apriltag2Family.value;
+    apriltag2NthreadsVal.innerHTML = apriltag2Nthreads.value;
+    apriltag2QuadDecimateVal.innerHTML = apriltag2QuadDecimate.value / 10;
+    apriltag2QuadBlurVal.innerHTML = apriltag2QuadBlur.value / 10;
+    apriltag2DecisionMarginVal.innerHTML = apriltag2DecisionMargin.value;    
 
     settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["apriltag2D"] = apriltag2Settings;
     updateSettingsJSON(settingsJSON);
@@ -278,44 +302,280 @@ async function updateApriltag2Settings() {
 async function loadApriltag3Settings() {
     const apriltag3Content = document.getElementById("apriltag3Content");
 
-    let data = await fetch("apriltag3Settings.json")
-    let dataJSON = await data.json()
-    let dataHTML = await dataJSON["data"]
-
     if (apriltag3Content.innerHTML == "") {
+        let data = await fetch("apriltag3Settings.json")
+        let dataJSON = await data.json();
+        let dataHTML = await dataJSON["data"];
         apriltag3Content.innerHTML = dataHTML;
+
+        let pageDataJSON = await getPageDataJSON();
+        let settingsJSON = await getSettingsJSON();
+        let currentCamera = pageDataJSON["currentCamera"];
+        let cam = "cam" + currentCamera.toString();
+        setApriltag3Settings(settingsJSON[cam]["pipelineSettings"]["apriltag3D"]);
     }
     else {
         apriltag3Content.innerHTML = "";
     }
 }
 function setApriltag3Settings(values) {
+    console.log("setApriltag3D")
+    const apriltag3Family = document.getElementById("apriltag3Family");
+    const apriltag3Nthreads = document.getElementById("apriltag3Nthreads");
+    const apriltag3QuadDecimate = document.getElementById("apriltag3QuadDecimate");
+    const apriltag3QuadBlur = document.getElementById("apriltag3QuadBlur");
+    const apriltag3RefineEdges = document.getElementById("apriltag3RefineEdges");
+    const apriltag3RefineDecode = document.getElementById("apriltag3RefineDecode");
+    const apriltag3RefinePose = document.getElementById("apriltag3RefinePose");
+    const apriltag3QuadContours = document.getElementById("apriltag3QuadContours");
+    const apriltag3DecisionMargin = document.getElementById("apriltag3DecisionMargin");
+    const apriltag3Fov = document.getElementById("apriltag3Fov");
+    
+    apriltag3Family.value = values["family"];
+    apriltag3Nthreads.value = values["nthreads"];
+    apriltag3QuadDecimate.value = values["quadDecimate"] * 10;
+    apriltag3QuadBlur.value = values["quadBlur"] * 10;
+    apriltag3RefineEdges.checked = values["refineEdges"];
+    apriltag3RefineDecode.checked = values["refineDecode"];
+    apriltag3RefinePose.checked = values["refinePose"];
+    apriltag3QuadContours.checked = values["quadContours"];
+    apriltag3DecisionMargin.value = values["decisionMargin"];
+    apriltag3Fov.value = values["fov"];
 
+    const apriltag3FamilyVal = document.getElementById("apriltag3FamilyVal");
+    const apriltag3NthreadsVal = document.getElementById("apriltag3NthreadsVal");
+    const apriltag3QuadDecimateVal = document.getElementById("apriltag3QuadDecimateVal");
+    const apriltag3QuadBlurVal = document.getElementById("apriltag3QuadBlurVal");
+    const apriltag3DecisionMarginVal = document.getElementById("apriltag3DecisionMarginVal");
+    const apriltag3FovVal = document.getElementById("apriltag3FovVal");
+    
+    apriltag3FamilyVal.innerHTML = apriltag3Family.value;
+    apriltag3NthreadsVal.innerHTML = apriltag3Nthreads.value;
+    apriltag3QuadDecimateVal.innerHTML = apriltag3QuadDecimate.value / 10;
+    apriltag3QuadBlurVal.innerHTML = apriltag3QuadBlur.value / 10;
+    apriltag3DecisionMarginVal.innerHTML = apriltag3DecisionMargin.value;  
+    apriltag3FovVal.innerHTML = apriltag3Fov.value;
+
+    apriltag3Family.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3Nthreads.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3QuadDecimate.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3QuadBlur.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3RefineEdges.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3RefineDecode.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3RefinePose.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3QuadContours.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3DecisionMargin.addEventListener('click', async function() {await updateApriltag3Settings()});
+    apriltag3Fov.addEventListener('click', async function() {await updateApriltag3Settings()});
 }
 async function updateApriltag3Settings() {
+    console.log("updateApriltag3D")
+    const apriltag3Family = document.getElementById("apriltag3Family");
+    const apriltag3Nthreads = document.getElementById("apriltag3Nthreads");
+    const apriltag3QuadDecimate = document.getElementById("apriltag3QuadDecimate");
+    const apriltag3QuadBlur = document.getElementById("apriltag3QuadBlur");
+    const apriltag3RefineEdges = document.getElementById("apriltag3RefineEdges");
+    const apriltag3RefineDecode = document.getElementById("apriltag3RefineDecode");
+    const apriltag3RefinePose = document.getElementById("apriltag3RefinePose");
+    const apriltag3QuadContours = document.getElementById("apriltag3QuadContours");
+    const apriltag3DecisionMargin = document.getElementById("apriltag3DecisionMargin");
+    const apriltag3Fov = document.getElementById("apriltag3Fov");
+
+    let pageDataJSON = await getPageDataJSON();
+    let settingsJSON = await getSettingsJSON();
+    let apriltag3Settings = settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["apriltag3D"];
+
+    apriltag3Settings["family"] = apriltag3Family.value;
+    apriltag3Settings["nthreads"] = apriltag3Nthreads.value;
+    apriltag3Settings["quadDecimate"] = apriltag3QuadDecimate.value / 10;
+    apriltag3Settings["quadBlur"] = apriltag3QuadBlur.value / 10;
+    apriltag3Settings["refineEdges"] = apriltag3RefineEdges.checked;
+    apriltag3Settings["refineDecode"] = apriltag3RefineDecode.checked;
+    apriltag3Settings["refinePose"] = apriltag3RefinePose.checked;
+    apriltag3Settings["quadContours"] = apriltag3QuadContours.checked;
+    apriltag3Settings["decisionMargin"] = apriltag3DecisionMargin.value;
+    apriltag3Settings["fov"] = apriltag3Fov.value;
+
+    const apriltag3FamilyVal = document.getElementById("apriltag3FamilyVal");
+    const apriltag3NthreadsVal = document.getElementById("apriltag3NthreadsVal");
+    const apriltag3QuadDecimateVal = document.getElementById("apriltag3QuadDecimateVal");
+    const apriltag3QuadBlurVal = document.getElementById("apriltag3QuadBlurVal");
+    const apriltag3DecisionMarginVal = document.getElementById("apriltag3DecisionMarginVal");
+    const apriltag3FovVal = document.getElementById("apriltag3FovVal");
     
+    apriltag3FamilyVal.innerHTML = apriltag3Family.value;
+    apriltag3NthreadsVal.innerHTML = apriltag3Nthreads.value;
+    apriltag3QuadDecimateVal.innerHTML = apriltag3QuadDecimate.value / 10;
+    apriltag3QuadBlurVal.innerHTML = apriltag3QuadBlur.value / 10;
+    apriltag3DecisionMarginVal.innerHTML = apriltag3DecisionMargin.value;  
+    apriltag3FovVal.innerHTML = apriltag3Fov.value;
+
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["apriltag3D"] = apriltag3Settings;
+    updateSettingsJSON(settingsJSON);
 }
 
 // Game Piece Geometry Settings
 async function loadGamePieceGeoSettings() {
     const gamePieceGeoContent = document.getElementById("gamePieceGeoContent");
 
-    let data = await fetch("gamePieceGeoSettings.json")
-    let dataJSON = await data.json()
-    let dataHTML = await dataJSON["data"]
-
     if (gamePieceGeoContent.innerHTML == "") {
+        let data = await fetch("gamePieceGeoSettings.json")
+        let dataJSON = await data.json();
+        let dataHTML = await dataJSON["data"];
         gamePieceGeoContent.innerHTML = dataHTML;
+
+        let pageDataJSON = await getPageDataJSON();
+        let settingsJSON = await getSettingsJSON();
+        let currentCamera = pageDataJSON["currentCamera"];
+        let cam = "cam" + currentCamera.toString();
+        setGamePieceGeoSettings(settingsJSON[cam]["pipelineSettings"]["gamePieceGeo"]);
     }
     else {
         gamePieceGeoContent.innerHTML = "";
     }
 }
 function setGamePieceGeoSettings(values) {
+    console.log("setGamePieceGeometry")
+    const lowerPurpleH = document.getElementById("lowerPurpleH");
+    const lowerPurpleS = document.getElementById("lowerPurpleS");
+    const lowerPurpleV = document.getElementById("lowerPurpleV");
+    const upperPurpleH = document.getElementById("upperPurpleH");
+    const upperPurpleS = document.getElementById("upperPurpleS");
+    const upperPurpleV = document.getElementById("upperPurpleV");
+    const arbituaryValueCube = document.getElementById("arbituaryValueCube");
+    const lowerYellowH = document.getElementById("lowerYellowH");
+    const lowerYellowS = document.getElementById("lowerYellowS");
+    const lowerYellowV = document.getElementById("lowerYellowV");
+    const upperYellowH = document.getElementById("upperYellowH");
+    const upperYellowS = document.getElementById("upperYellowS");
+    const upperYellowV = document.getElementById("upperYellowV");
+    const arbituaryValueCone = document.getElementById("arbituaryValueCone");
+
+    lowerPurpleH.value = values["lowerPurple"][0];
+    lowerPurpleS.value = values["lowerPurple"][1];
+    lowerPurpleV.value = values["lowerPurple"][2];
+    upperPurpleH.value = values["upperPurple"][0];
+    upperPurpleS.value = values["upperPurple"][1];
+    upperPurpleV.value = values["upperPurple"][2];
+    arbituaryValueCube.value = values["arbituaryValueCube"] * 100;
+    lowerYellowH.value = values["lowerYellow"][0];
+    lowerYellowS.value = values["lowerYellow"][1];
+    lowerYellowV.value = values["lowerYellow"][2];
+    upperYellowH.value = values["upperYellow"][0];
+    upperYellowS.value = values["upperYellow"][1];
+    upperYellowV.value = values["upperYellow"][2];
+    arbituaryValueCone.value = values["arbituaryValueCone"] * 100;
+
+    const lowerPurpleHVal = document.getElementById("lowerPurpleHVal");
+    const lowerPurpleSVal = document.getElementById("lowerPurpleSVal");
+    const lowerPurpleVVal = document.getElementById("lowerPurpleVVal");
+    const upperPurpleHVal = document.getElementById("upperPurpleHVal");
+    const upperPurpleSVal = document.getElementById("upperPurpleSVal");
+    const upperPurpleVVal = document.getElementById("upperPurpleVVal");
+    const arbituaryValueCubeVal = document.getElementById("arbituaryValueCubeVal");
+    const lowerYellowHVal = document.getElementById("lowerYellowHVal");
+    const lowerYellowSVal = document.getElementById("lowerYellowSVal");
+    const lowerYellowVVal = document.getElementById("lowerYellowVVal");
+    const upperYellowHVal = document.getElementById("upperYellowHVal");
+    const upperYellowSVal = document.getElementById("upperYellowSVal");
+    const upperYellowVVal = document.getElementById("upperYellowVVal");
+    const arbituaryValueConeVal = document.getElementById("arbituaryValueConeVal");
+
+    lowerPurpleHVal.innerHTML = lowerPurpleH.value;
+    lowerPurpleSVal.innerHTML = lowerPurpleS.value;
+    lowerPurpleVVal.innerHTML = lowerPurpleV.value;
+    upperPurpleHVal.innerHTML = upperPurpleH.value;
+    upperPurpleSVal.innerHTML = upperPurpleS.value;
+    upperPurpleVVal.innerHTML = upperPurpleV.value;
+    arbituaryValueCubeVal.innerHTML = arbituaryValueCube.value / 100;
+    lowerYellowHVal.innerHTML = lowerYellowH.value;
+    lowerYellowSVal.innerHTML = lowerYellowS.value;
+    lowerYellowVVal.innerHTML = lowerYellowV.value;
+    upperYellowHVal.innerHTML = upperYellowH.value;
+    upperYellowSVal.innerHTML = upperYellowS.value;
+    upperYellowVVal.innerHTML = upperYellowV.value;
+    arbituaryValueConeVal.innerHTML = arbituaryValueCone.value / 100;
+
+    lowerPurpleH.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    lowerPurpleS.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    lowerPurpleV.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperPurpleH.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperPurpleS.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperPurpleV.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    arbituaryValueCube.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    lowerYellowH.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    lowerYellowS.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    lowerYellowV.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperYellowH.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperYellowS.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    upperYellowV.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
+    arbituaryValueCone.addEventListener('click', async function() {await updateGamePieceGeoSettings()});
 
 }
 async function updateGamePieceGeoSettings() {
+    console.log("updateGamePieceGeometry")
+    const lowerPurpleH = document.getElementById("lowerPurpleH");
+    const lowerPurpleS = document.getElementById("lowerPurpleS");
+    const lowerPurpleV = document.getElementById("lowerPurpleV");
+    const upperPurpleH = document.getElementById("upperPurpleH");
+    const upperPurpleS = document.getElementById("upperPurpleS");
+    const upperPurpleV = document.getElementById("upperPurpleV");
+    const arbituaryValueCube = document.getElementById("arbituaryValueCube");
+    const lowerYellowH = document.getElementById("lowerYellowH");
+    const lowerYellowS = document.getElementById("lowerYellowS");
+    const lowerYellowV = document.getElementById("lowerYellowV");
+    const upperYellowH = document.getElementById("upperYellowH");
+    const upperYellowS = document.getElementById("upperYellowS");
+    const upperYellowV = document.getElementById("upperYellowV");
+    const arbituaryValueCone = document.getElementById("arbituaryValueCone");
+
+    let pageDataJSON = await getPageDataJSON();
+    let settingsJSON = await getSettingsJSON();
+    let gamePieceGeoSettings = settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["gamePieceGeo"];
+
+    let lowerPurple = [lowerPurpleH.value, lowerPurpleS.value, lowerPurpleV.value];
+    let upperPurple = [upperPurpleH.value, upperPurpleS.value, upperPurpleV.value];
+    let lowerYellow = [lowerYellowH.value, lowerYellowS.value, lowerYellowV.value];
+    let upperYellow = [upperYellowH.value, upperYellowS.value, upperYellowV.value];
+
+    gamePieceGeoSettings["lowerPurple"] = lowerPurple;
+    gamePieceGeoSettings["upperPurple"] = upperPurple;
+    gamePieceGeoSettings["arbituaryValueCube"] = arbituaryValueCube.value;
+    gamePieceGeoSettings["lowerYellow"] = lowerYellow;
+    gamePieceGeoSettings["upperYellow"] = upperYellow;
+    gamePieceGeoSettings["arbituaryValueCone"] = arbituaryValueCone.value;
+
+    const lowerPurpleHVal = document.getElementById("lowerPurpleHVal");
+    const lowerPurpleSVal = document.getElementById("lowerPurpleSVal");
+    const lowerPurpleVVal = document.getElementById("lowerPurpleVVal");
+    const upperPurpleHVal = document.getElementById("upperPurpleHVal");
+    const upperPurpleSVal = document.getElementById("upperPurpleSVal");
+    const upperPurpleVVal = document.getElementById("upperPurpleVVal");
+    const arbituaryValueCubeVal = document.getElementById("arbituaryValueCubeVal");
+    const lowerYellowHVal = document.getElementById("lowerYellowHVal");
+    const lowerYellowSVal = document.getElementById("lowerYellowSVal");
+    const lowerYellowVVal = document.getElementById("lowerYellowVVal");
+    const upperYellowHVal = document.getElementById("upperYellowHVal");
+    const upperYellowSVal = document.getElementById("upperYellowSVal");
+    const upperYellowVVal = document.getElementById("upperYellowVVal");
+    const arbituaryValueConeVal = document.getElementById("arbituaryValueConeVal");
+
+    lowerPurpleHVal.innerHTML = lowerPurpleH.value;
+    lowerPurpleSVal.innerHTML = lowerPurpleS.value;
+    lowerPurpleVVal.innerHTML = lowerPurpleV.value;
+    upperPurpleHVal.innerHTML = upperPurpleH.value;
+    upperPurpleSVal.innerHTML = upperPurpleS.value;
+    upperPurpleVVal.innerHTML = upperPurpleV.value;
+    arbituaryValueCubeVal.innerHTML = arbituaryValueCube.value / 100;
+    lowerYellowHVal.innerHTML = lowerYellowH.value;
+    lowerYellowSVal.innerHTML = lowerYellowS.value;
+    lowerYellowVVal.innerHTML = lowerYellowV.value;
+    upperYellowHVal.innerHTML = upperYellowH.value;
+    upperYellowSVal.innerHTML = upperYellowS.value;
+    upperYellowVVal.innerHTML = upperYellowV.value;
+    arbituaryValueConeVal.innerHTML = arbituaryValueCone.value / 100;
     
+    settingsJSON["cam" + pageDataJSON["currentCamera"].toString()]["pipelineSettings"]["gamePieceGeo"] = gamePieceGeoSettings;
+    updateSettingsJSON(settingsJSON);
 }
 
 // Game Piece Machine Learning Settings

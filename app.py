@@ -1,9 +1,10 @@
 from flask import Flask, render_template, Response, request
 from camera import Camera
-import camera
+import camera as cameraClass
 from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
 import json
+import cv2
 app = Flask(__name__)
 app.config['SERVER_NAME'] = 'chickenvision:8000'
 
@@ -49,9 +50,57 @@ def gen():
         
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + labeledFrame + b'\r\n\r\n')
-        
-    cap.cameraStream.release()
-    
+
+def runCameras():
+    # availableCams = cameraClass.getAvailableCameraIndexes()
+    availableCams = [0, 4]
+    cams = []
+    print(availableCams)
+    for cam in availableCams:
+        print(cam)
+        cams.append({
+            "camIndex": cam,
+            "cameraStream": Camera(cam),
+            "apriltag2D": ApriltagDetector2D(),
+            "apriltag3D": ApriltagDetector3D(),
+            "gamePieceGeoCube": CubeDetector(),
+            "gamePieceGeoCone": ConeDetector()
+        })
+    while True:
+        currentViewedCam = json.loads(open("pageData.json", "r").read())["currentCamera"]
+        for cam in cams:
+            cam["cameraStream"].getCalibrationInfo()
+            cam["apriltag3D"].setCamParams(cam["cameraStream"].params)
+            
+            frame = cam["cameraStream"].getLatestFrame()
+            labeledFrame = frame
+
+            cameraSettingsJSON = open("settings.json", "r")
+            cameraSettings = json.loads(cameraSettingsJSON.read())
+            # print(cameraSettings)
+            cameraSettingsDict = cameraSettings["cam" + str(cam["camIndex"])]
+            cameraSettingsJSON.close()
+            
+            if cameraSettingsDict["pipelineSettings"]["toggles"][0]:
+                labeledFrame = cam["apriltag2D"].update(labeledFrame, frame)
+                
+            if cameraSettingsDict["pipelineSettings"]["toggles"][1]:
+                labeledFrame = cam["apriltag3D"].update(labeledFrame, frame)
+                
+            if cameraSettingsDict["pipelineSettings"]["toggles"][2]:
+                labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
+                labeledFrame = cam["gamePieceGeoCone"].update(labeledFrame, frame)
+            
+            cam["cameraStream"].renderCameraStream(labeledFrame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            
+            if cam["camIndex"] == currentViewedCam:
+                frameBytes = cam["cameraStream"].convertFrameToBytes(labeledFrame)
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
+                
 # GET/POST JSON STORAGE
 @app.route('/pageData.json', methods = ['GET', 'POST'])
 def getPageData():
@@ -83,7 +132,7 @@ def available_feeds():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(),
+    return Response(runCameras(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
 # GET HTML TEMPLATES

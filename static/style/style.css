@@ -37,6 +37,7 @@ body {
     width: calc(50% - 3px);
     height: calc(100vh - 84px);
     border: 1px solid #202020;
+    overflow-y: auto;
 }
 .settingsNavBar {
     width: calc(100% - 2px);
