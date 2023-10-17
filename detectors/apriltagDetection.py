@@ -1,5 +1,7 @@
-import apriltag
-import cv2
+import apriltag as apriltag
+import cv2 as cv2
+import solver
+import json
 
 class ApriltagDetector:
     def __init__(self, options: apriltag.DetectorOptions = apriltag.DetectorOptions(families="tag16h5"), decisionMargin: int = 30):
@@ -61,6 +63,9 @@ class ApriltagDetector3D(ApriltagDetector):
         self.camParams = camParams
         self.tagSize = tagSize
         self.fov = fov
+        environment_json = open("environment.json", 'r')
+        environment = json.load(environment_json)
+        self.solver = solver.RobotPoseSolver(environment)
 
     def setCamParams(self, camParams):
         self.camParams = camParams
@@ -82,10 +87,16 @@ class ApriltagDetector3D(ApriltagDetector):
 
     def printTagData3D(self):
         for i in range(len(self.tags[0])):
-            print(f"pose data: {self.tags[1][i]}")
-            print(f"tag id: {self.tags[0][i].tag_id}")
-            print(f"decision margin: {self.tags[0][i].decision_margin}")
-            print("")
+            # print(f"pose data: {self.tags[1][i]}")
+            # print(f"tag id: {self.tags[0][i].tag_id}")
+            # print(f"decision margin: {self.tags[0][i].decision_margin}")
+            # print(self.tags[1])
+            position, matrices = self.solver.solve(self.tags[1], self.tagSize)
+            print(position)
+            
+    def returnPose(self):
+        position, matrices = self.solver.solve(self.tags[1], self.tagSize)
+        return position
 
     def renderTags3D(self, frame):
         for pose in self.tags[1]:
