@@ -1,8 +1,4 @@
-# Solves for robot position based on results of found tags
 import numpy as np
-# from main import logger
-
-# TODO-Ryan: Finish/Fix
 
 # Manual implementation of matrix inversion because np.linalg.inv is slow
 def invert(m):
@@ -51,78 +47,21 @@ def invert(m):
 		det *  (m00 * a1212 - m01 * a0212 + m02 * a0112)  \
 	]).reshape(4, 4)
 
-class RobotPoseSolver:
-	def __init__(self, environment_dict):
-		# Unpack tag positions into lookup dictionary
-		if not environment_dict['tags']:
-			# logger.error('No tags defined! Quitting')
-			raise AssertionError('No tags defined in environment JSON')
-		self.tags_dict = {tag['id']: tag for tag in environment_dict['tags']}
-		self.tag_family = environment_dict['tag_family']
+def solve(self, rawPose, tagSize):
+	# Apply camera and tag pose to estimated pose
+	rawPose
 
-		if self.tag_family != "tag16h5":
-			'''logger.warning('Are you sure that you want to look for, tags in the \
-				family {}. FRC uses 16h5'.format(self.tag_family))
-			'''
-	def solve(self, detection_poses, size):
-		# Master list of estimated poses to be combined
-		estimated_poses_list = []
+	# convert raw pose data to numpy array
+	rawPose = np.array(rawPose)
 
-		# Apply camera and tag pose to estimated pose
-		for pose_dict in detection_poses:
-			estimated_pose = pose_dict
-			# camera_pose = 
-			tag_id = 0
-			tag_family = "tag16h5"
+	# Scale estimated position by tag size
+	rawPose[0][3] *= tagSize
+	rawPose[1][3] *= tagSize
+	rawPose[2][3] *= tagSize
 
-			# Find the tag info that matches that tag
-			# if self.tag_family not in str(tag_family):
-			# 	logger.warning(f"Found a tag that doesn't belong to {self.tag_family}")
-			# 	continue
+	# camera position relative to tag
+	cameraPose = invert(rawPose)
 
-			# Get the info for the tag
-			# tag_dict = self.tags_dict.get(tag_id)
-
-			# if not tag_dict:
-			# 	logger.warning(f"Found a tag that isn't defined in environment. ID: {tag_id}")
-			# 	continue
-
-			# tag_pose = tag_dict['transform']
-
-			# Convert to numpy arrarys for math
-			estimated_pose = np.array(estimated_pose)
-			# camera_pose = np.array(camera_pose)
-			# tag_pose = np.array(tag_pose)
-
-			# Scale estimated position by tag size
-			estimated_pose[0][3] *= size
-			estimated_pose[1][3] *= size
-			estimated_pose[2][3] *= size
-
-			# Find where the camera is if the tag is at the origin
-			tag_relative_camera_pose = invert(estimated_pose)
-   
-			# print(tag_relative_camera_pose)
-
-			# Find the camera position relative to the tag position
-			# world_camera_pose = np.matmul(tag_pose, tag_relative_camera_pose)
-
-			# Find the position of the robot from the camera position
-			# inv_rel_camera_pose = invert(camera_pose)
-			# robot_pose = np.matmul(world_camera_pose, inv_rel_camera_pose)
-
-			estimated_poses_list.append(tag_relative_camera_pose)
-
-		# Combine poses with average (just for position, not rotation)
-
-		if not estimated_poses_list:
-			# If we have no samples, report none
-			return (None, estimated_poses_list)
-			
-		# TODO: Figure out rotation
-		total = np.array([0.0, 0.0, 0.0])
-		for pose in estimated_poses_list:
-			total += np.array([pose[0][3], pose[1][3], pose[2][3]])
-		average = total / len(estimated_poses_list)
-		# print(average)
-		return (average, estimated_poses_list)
+	pose = [cameraPose[0][3], cameraPose[1][3], cameraPose[2][3]]
+ 
+	return pose

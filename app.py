@@ -3,10 +3,15 @@ from camera import Camera
 import camera as cameraClass
 from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
+from detectors.gamePieceDetectionML import GamePieceDetectionML
 from apriltag import DetectorOptions
 import json
 import cv2
 import numpy as np
+
+latestFrame = None
+currentCam = 0
+
 app = Flask(__name__)
 app.config['SERVER_NAME'] = 'chickenvision.local:8000'
 
@@ -54,7 +59,8 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + labeledFrame + b'\r\n\r\n')
 
-def runCameras():
+# runs the cameras and the pipelines based off of settings.json and sets the latest frame for the webserver
+async def runCameras():
     # availableCams = cameraClass.getAvailableCameraIndexes()
     availableCams = [0]
     cams = []
@@ -151,7 +157,7 @@ def runCameras():
                 
                 if cam["camIndex"] == currentViewedCam:
                     frameBytes = cam["cameraStream"].convertFrameToBytes(labeledFrame)
-                    yield (b'--frame\r\n'
+                    latestFrame = (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
             except:
                 None
@@ -180,15 +186,22 @@ def getSettings():
         return "good"
 
 # GET VIDEO FEED STUFF
+# reads json file for available cams
+# (need to add this functionality to settings json)
+# returns available camera indeces
 @app.route('/available_feeds')
 def available_feeds():
-    data = json.dumps({"data": [camera.getAvailableCameraIndexes()]})
+    
+    data = json.loads({"data": []})
     return data
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(runCameras(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    lastFrame = None
+    while True:
+        if lastFrame != latestFrame:
+            lastFrame = latestFrame
+            return Response(runCameras(), mimetype='multipart/x-mixed-replace; boundary=frame')
     
 # GET HTML TEMPLATES
 @app.route('/cameraSettings.json')
@@ -233,3 +246,4 @@ def settingsTemplate():
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)
+    runCameras()

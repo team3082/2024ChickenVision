@@ -8,7 +8,6 @@ class CubeDetector:
         self.upperPurple = upperPurple
         self.contours = None
         self.cubes = ()
-        # i dont rly know why it does what it does but it does what it does.
         self.arbituaryValue = arbituaryValue
         
     def updatePurple(self, lowerPurple: np.ndarray, upperPurple: np.ndarray):
@@ -18,14 +17,25 @@ class CubeDetector:
     def updateArbituaryValue(self, arbituaryValue: float):
         self.arbituaryValue = arbituaryValue
         
-    def printcubeData(self):
-        # printing out data to console for debugging
-        for cube in self.cubes:
-            if cube != None:
-                position = cube[0]
-                area = cube[1]
-                print(f"Position: ({position[0]}, {position[1]})")
-                print(f"Area: {area}")
+    def getLatestFrame(self, frame):
+        self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    def getContours(self):
+        # detecting only specific colors
+        imgThreshLow = cv2.inRange(self.frame, self.lowerPurple, self.upperPurple)
+
+        # simplifying the frames
+        kernel = np.ones((5,5),np.uint8)
+        threshed_img_smooth = cv2.erode(imgThreshLow, kernel, iterations = 3)
+        threshed_img_smooth = cv2.dilate(threshed_img_smooth, kernel, iterations = 2)
+        smoothed_img = cv2.dilate(threshed_img_smooth, kernel, iterations = 15)
+        smoothed_img = cv2.erode(smoothed_img, kernel, iterations = 10)
+
+        # getting edges
+        edges_img = cv2.Canny(smoothed_img, 100, 200)
+
+        # getting contours
+        self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     def detectCubes(self):
         # resetting data from previous frame
@@ -51,23 +61,6 @@ class CubeDetector:
         else:
             self.cubes = [None]
 
-    def getContours(self):
-        # detecting only specific colors
-        imgThreshLow = cv2.inRange(self.frame, self.lowerPurple, self.upperPurple)
-
-        # simplifying the frames
-        kernel = np.ones((5,5),np.uint8)
-        threshed_img_smooth = cv2.erode(imgThreshLow, kernel, iterations = 3)
-        threshed_img_smooth = cv2.dilate(threshed_img_smooth, kernel, iterations = 2)
-        smoothed_img = cv2.dilate(threshed_img_smooth, kernel, iterations = 15)
-        smoothed_img = cv2.erode(smoothed_img, kernel, iterations = 10)
-
-        # getting edges
-        edges_img = cv2.Canny(smoothed_img, 100, 200)
-
-        # getting contours
-        self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
     def renderCubes(self, frame):
         # stuff for printing stuff to camera stream
         font = cv2.FONT_HERSHEY_SIMPLEX
@@ -90,9 +83,23 @@ class CubeDetector:
                     lineType)
                 cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
         return frame
-
-    def getLatestFrame(self, frame):
-        self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        
+    def printCubeData(self):
+        # printing out data to console for debugging
+        for cube in self.cubes:
+            if cube != None:
+                position = cube[0]
+                area = cube[1]
+                print(f"Position: ({position[0]}, {position[1]})")
+                print(f"Area: {area}")
+                
+    def returnCubeData(self):
+        cubeData = []
+        for cube in self.cubes:
+            position = cube[0]
+            area = cube[1]
+            cubeData.append({"pose": position, "area": area})
+        return cubeData
 
     def update(self, labeledFrame, frame):
         self.getLatestFrame(frame)
@@ -118,15 +125,23 @@ class ConeDetector:
     
     def updateArbituaryValue(self, arbituaryValue: float):
         self.arbituaryValue = arbituaryValue
-    
-    def printConeData(self):
-        # printing out data to console for debugging
-        for cone in self.cones:
-            if cone != None:
-                position = cone[0]
-                area = cone[1]
-                print(f"Position: ({position[0]}, {position[1]})")
-                print(f"Area: {area}")
+
+    def getContours(self):
+        # detecting only specific colors
+        imgThreshLow = cv2.inRange(self.frame, self.lowerYellow, self.upperYellow)
+
+        # simplifying the frames
+        kernel = np.ones((5,5),np.uint8)
+        threshed_img_smooth = cv2.erode(imgThreshLow, kernel, iterations = 3)
+        threshed_img_smooth = cv2.dilate(threshed_img_smooth, kernel, iterations = 2)
+        smoothed_img = cv2.dilate(threshed_img_smooth, kernel, iterations = 15)
+        smoothed_img = cv2.erode(smoothed_img, kernel, iterations = 10)
+
+        # getting edges
+        edges_img = cv2.Canny(smoothed_img, 100, 200)
+
+        # getting contours
+        self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     def detectCones(self):
         # resetting data from previous frame
@@ -152,23 +167,6 @@ class ConeDetector:
         else:
             self.cubes = [None]
 
-    def getContours(self):
-        # detecting only specific colors
-        imgThreshLow = cv2.inRange(self.frame, self.lowerYellow, self.upperYellow)
-
-        # simplifying the frames
-        kernel = np.ones((5,5),np.uint8)
-        threshed_img_smooth = cv2.erode(imgThreshLow, kernel, iterations = 3)
-        threshed_img_smooth = cv2.dilate(threshed_img_smooth, kernel, iterations = 2)
-        smoothed_img = cv2.dilate(threshed_img_smooth, kernel, iterations = 15)
-        smoothed_img = cv2.erode(smoothed_img, kernel, iterations = 10)
-
-        # getting edges
-        edges_img = cv2.Canny(smoothed_img, 100, 200)
-
-        # getting contours
-        self.contours, heirarchy = cv2.findContours(edges_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
     def renderCones(self, frame):
         # stuff for printing stuff to camera stream
         font = cv2.FONT_HERSHEY_SIMPLEX
@@ -191,6 +189,23 @@ class ConeDetector:
                     lineType)
                 cv2.drawContours(frame, [contour], -1, (0, 255, 0), 2)
         return frame
+
+    def printConeData(self):
+        # printing out data to console for debugging
+        for cone in self.cones:
+            if cone != None:
+                position = cone[0]
+                area = cone[1]
+                print(f"Position: ({position[0]}, {position[1]})")
+                print(f"Area: {area}")
+                
+    def returnCodeData(self):
+        coneData = []
+        for cone in self.cones:
+            position = cone[0]
+            area = cone[1]
+            coneData.append({"pose": position, "area": area})
+        return coneData
 
     def getLatestFrame(self, frame):
         self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
