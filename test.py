@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append("detectors")
-from detectors.apriltagDetection import ApriltagDetector2D
+from detectors.apriltagDetection import ApriltagDetector3D
 from detectors.gamePieceDetection import ConeDetector
 from detectors.gamePieceDetection import CubeDetector
 from detectors.calibrateCam import CameraCalibrator
@@ -15,7 +15,7 @@ cam0 = Camera(0)
 # modelPath = os.path.join("model_data", "frozen_inference_graph.pb")
 # classesPath = os.path.join("model_data","coco.names")
 # detector = GamePieceDetectionML()
-apriltagDetector = ApriltagDetector2D()
+apriltagDetector = ApriltagDetector3D()
 while True:
     
     frame = cam0.getLatestFrame()

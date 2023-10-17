@@ -27,43 +27,43 @@
             "refineDecode": false,
             "refinePose": false,
             "quadContours": false,
-            "decisionMargin": "50"
+            "decisionMargin": "5"
          },
          "apriltag3D": {
             "family": "1",
             "nthreads": "4",
             "quadDecimate": 0.2,
-            "quadBlur": 0,
+            "quadBlur": 0.3,
             "refineEdges": true,
             "refineDecode": false,
-            "refinePose": true,
+            "refinePose": false,
             "quadContours": false,
-            "decisionMargin": "52",
+            "decisionMargin": "22",
             "fov": "70"
          },
          "gamePieceGeo": {
             "lowerPurple": [
-               "122",
-               "125",
-               "118"
+               "67",
+               "47",
+               "23"
             ],
             "upperPurple": [
-               "168",
-               "248",
-               "253"
+               "183",
+               "250",
+               "252"
             ],
             "arbituaryValueCube": "8",
             "lowerYellow": [
-               "17",
-               "55",
-               "47"
+               "0",
+               "109",
+               "100"
             ],
             "upperYellow": [
-               "82",
-               "152",
-               "202"
+               "140",
+               "146",
+               "221"
             ],
-            "arbituaryValueCone": "8"
+            "arbituaryValueCone": "10"
          },
          "gamePieceML": {},
          "retroreflective": {
