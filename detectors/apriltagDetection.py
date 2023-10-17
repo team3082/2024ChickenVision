@@ -1,5 +1,5 @@
-import apriltag as apriltag
-import cv2 as cv2
+import apriltag
+import cv2
 
 class ApriltagDetector:
     def __init__(self, options: apriltag.DetectorOptions = apriltag.DetectorOptions(families="tag16h5"), decisionMargin: int = 30):

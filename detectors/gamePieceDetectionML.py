@@ -31,7 +31,7 @@ class GamePieceDetectionML:
         self.colorList = np.random.uniform(low=0, high=255, size=(len(self.classesList),3))
     
     
-    def captureVideo(self,frame):
+    def detectInFrame(self,frame):
        classLabelIDs, conficences, bboxs = self.net.detect(frame, confThreshold = 0.5)
        
        bboxs = list(bboxs)

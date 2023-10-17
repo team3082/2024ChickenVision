@@ -48,6 +48,7 @@ def gen():
             labeledFrame = cone.update(labeledFrame, frame)
             labeledFrame = cube.update(labeledFrame, frame)
         
+        
         labeledFrame = cap.convertFrameToBytes(labeledFrame)
         
         yield (b'--frame\r\n'
@@ -70,6 +71,7 @@ def runCameras():
         })
         cubeDetector = CubeDetector()
         coneDetector = ConeDetector()
+        objDetector = GamePieceDetectionML()
     while True:
         currentViewedCamJSON = open("pageData.json", "r")
         currentViewedCam = json.loads(currentViewedCamJSON.read())["currentCamera"]
@@ -140,7 +142,8 @@ def runCameras():
                     labeledFrame = cubeDetector.update(labeledFrame, frame)
                     labeledFrame = coneDetector.update(labeledFrame, frame)
                     # print(2)
-
+                if cameraSettingsDict["pipelineSettings"]["toggles"][3]:
+                    objDetector.detectInFrame(labeledFrame)
                 # cam["cameraStream"].renderCameraStream(labeledFrame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
