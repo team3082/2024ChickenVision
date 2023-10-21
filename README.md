@@ -4,7 +4,6 @@
 
 * flask
 * numpy
-* robotpy-cscore
 * opencv-contrib-python
 * [apriltag](https://github.com/swatbotics/apriltag)
 
