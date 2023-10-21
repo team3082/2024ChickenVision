@@ -1,6 +1,6 @@
 import apriltag as apriltag
 import cv2 as cv2
-import solver
+import detectors.apriltagSolver as solver
 import json
 
 class ApriltagDetector:
@@ -91,7 +91,7 @@ class ApriltagDetector3D(ApriltagDetector):
             for tag in tags:
                 # gets the raw position data matrix, then converts it to x, y, z
                 poseRaw, e0, e1 = self.detector.detection_pose(tag, self.camParams, self.tagSize)
-                pose, matrices = self.solver.solve(poseRaw)
+                pose, matrices = solver.solve(poseRaw)
                 
                 # adds the tag data if the decision margin is high enough
                 if tag.decision_margin >= self.decisionMargin:

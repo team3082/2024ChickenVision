@@ -1,6 +1,6 @@
 from flask import Flask, render_template, Response, request
 from camera import Camera
-import camera as cameraClass
+import camera
 from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
 from detectors.gamePieceDetectionML import GamePieceDetectionML
@@ -8,94 +8,47 @@ from apriltag import DetectorOptions
 import json
 import cv2
 import numpy as np
+import threading
+import os
+from queue import Queue
 
-latestFrame = None
-currentCam = 0
+queue = Queue()
 
-app = Flask(__name__)
-app.config['SERVER_NAME'] = 'chickenvision.local:8000'
-
-# render main page template
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-# render mjpeg camera stream
-def gen():
-    with open("pageData.json", "r") as pageData:
-        data = json.loads(pageData.read())
-        camIndex = data["currentCamera"]
-    print(camIndex)
-    cap = Camera(camIndex)
-    cap.getCalibrationInfo()
+def start():
+    app.run(host='0.0.0.0', debug=False, port=8000)
     
-    apriltag2 = ApriltagDetector2D()
-    apriltag3 = ApriltagDetector3D(camParams=cap.params)
-    
-    cone = ConeDetector()
-    cube = CubeDetector()
-    
-    while True:
-        frame = cap.getLatestFrame()
-        labeledFrame = frame
-        
-        settings = open("settings.json", "r")
-        settingsDict = json.loads(settings.read())
-        settings.close()
-        
-        toggles = settingsDict["cam" + str(camIndex)]["pipelineSettings"]["toggles"]
-        
-        if toggles[0] == True:
-            labeledFrame = apriltag2.update(labeledFrame, frame)
-        if toggles[1] == True:
-            labeledFrame = apriltag3.update(labeledFrame, frame)
-        if toggles[2] == True:
-            labeledFrame = cone.update(labeledFrame, frame)
-            labeledFrame = cube.update(labeledFrame, frame)
-        
-        
-        labeledFrame = cap.convertFrameToBytes(labeledFrame)
-        
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + labeledFrame + b'\r\n\r\n')
-
-# runs the cameras and the pipelines based off of settings.json and sets the latest frame for the webserver
-async def runCameras():
+def runCameras():
     # availableCams = cameraClass.getAvailableCameraIndexes()
     availableCams = [0]
     cams = []
     # print(availableCams)
     for cam in availableCams:
-        # print(cam)
-        cams.append({
-            "camIndex": cam,
-            "cameraStream": Camera(cam),
-            "apriltag2D": ApriltagDetector2D(),
-            "apriltag3D": ApriltagDetector3D(),
-            "gamePieceGeoCube": CubeDetector(),
-            "gamePieceGeoCone": ConeDetector()
-        })
+        cams.append([cam, Camera(cam)])
+        apriltag2Detector = ApriltagDetector2D()
+        apriltag3Detector = ApriltagDetector3D()
         cubeDetector = CubeDetector()
         coneDetector = ConeDetector()
         objDetector = GamePieceDetectionML()
     while True:
-        currentViewedCamJSON = open("pageData.json", "r")
-        currentViewedCam = json.loads(currentViewedCamJSON.read())["currentCamera"]
-        currentViewedCamJSON.close()
+        # print("yo")
+        pageDataJSON = open("pageData.json", "r")
+        currentViewedCam = json.loads(pageDataJSON.read())["currentCamera"]
+        pageDataJSON.close()
+        
+        cameraSettingsJSON = open("settings.json", "r")
+        cameraSettings = json.loads(cameraSettingsJSON.read())
+        cameraSettingsJSON.close()
+                
         for cam in cams:
             try:
-                cam["cameraStream"].getCalibrationInfo()
-                cam["apriltag3D"].setCamParams(cam["cameraStream"].params)
-
-                frame = cam["cameraStream"].getLatestFrame()
+                # print(-1)
+                cam[1].getCalibrationInfo()
+                apriltag3Detector.setCamParams(cam[1].params)
+                frame = cam[1].getLatestFrame()
                 labeledFrame = frame
-
-                cameraSettingsJSON = open("settings.json", "r")
-                cameraSettings = json.loads(cameraSettingsJSON.read())
-                # print(cameraSettings)
-                cameraSettingsDict = cameraSettings["cam" + str(cam["camIndex"])]
-                cameraSettingsJSON.close()
                 
+                cameraSettingsDict = cameraSettings["cam" + str(cam[0])]
+                # print(0)
                 if cameraSettingsDict["pipelineSettings"]["toggles"][0]:
                     optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag2D"]
                     options = DetectorOptions(
@@ -108,10 +61,10 @@ async def runCameras():
                         refine_pose=optionsDict["refinePose"],
                         quad_contours=optionsDict["quadContours"]
                         )
-                    cam["apriltag2D"].updateOptions(options)
-                    cam["apriltag2D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
-                    labeledFrame = cam["apriltag2D"].update(labeledFrame, frame)
-                    
+                    apriltag2Detector.updateOptions(options)
+                    apriltag2Detector.updateDecisionMargin(float(optionsDict["decisionMargin"]))
+                    labeledFrame = apriltag2Detector.update(labeledFrame, frame)
+                # print(1)
                 if cameraSettingsDict["pipelineSettings"]["toggles"][1]:
                     optionsDict = cameraSettingsDict["pipelineSettings"]["apriltag3D"]
                     options = DetectorOptions(
@@ -124,11 +77,10 @@ async def runCameras():
                         refine_pose=optionsDict["refinePose"],
                         quad_contours=optionsDict["quadContours"]
                         )
-                    cam["apriltag3D"].updateOptions(options)
-                    cam["apriltag3D"].updateDecisionMargin(float(optionsDict["decisionMargin"]))
-                    cam["apriltag3D"].updateFov(optionsDict["fov"])
-                    labeledFrame = cam["apriltag3D"].update(labeledFrame, frame)
-                    
+                    apriltag3Detector.updateOptions(options)
+                    apriltag3Detector.updateDecisionMargin(float(optionsDict["decisionMargin"]))
+                    labeledFrame = apriltag3Detector.update(labeledFrame, frame)
+                # print(2)
                 if cameraSettingsDict["pipelineSettings"]["toggles"][2]:
                     optionsDict = cameraSettingsDict["pipelineSettings"]["gamePieceGeo"]
                     # print(0)
@@ -137,7 +89,6 @@ async def runCameras():
                     coneDetector.updateYellow(lowerYellow, upperYellow)
                     coneDetector.updateArbituaryValue(float(optionsDict["arbituaryValueCone"]) / 100)
                     # labeledFrame = cam["gamePieceGeoCube"].update(labeledFrame, frame)
-
                     # print(1)
                     lowerPurple = np.array([int(optionsDict["lowerPurple"][0]), int(optionsDict["lowerPurple"][1]), int(optionsDict["lowerPurple"][2])])
                     upperPurple = np.array([int(optionsDict["upperPurple"][0]), int(optionsDict["upperPurple"][1]), int(optionsDict["upperPurple"][2])])
@@ -148,19 +99,42 @@ async def runCameras():
                     labeledFrame = cubeDetector.update(labeledFrame, frame)
                     labeledFrame = coneDetector.update(labeledFrame, frame)
                     # print(2)
+                # print(3)
                 if cameraSettingsDict["pipelineSettings"]["toggles"][3]:
                     objDetector.detectInFrame(labeledFrame)
                 # cam["cameraStream"].renderCameraStream(labeledFrame)
-
+                # print(4)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-                
-                if cam["camIndex"] == currentViewedCam:
-                    frameBytes = cam["cameraStream"].convertFrameToBytes(labeledFrame)
-                    latestFrame = (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
-            except:
-                None
+                # print(5)
+                if cam[0] == currentViewedCam:
+                    frameBytes = cam[1].convertFrameToBytes(labeledFrame)
+                    queue.put(frameBytes)
+                    # print(frameBytes)
+
+            except KeyboardInterrupt:
+                break
+
+thread1 = threading.Thread(target=runCameras)
+
+thread1.start()
+
+app = Flask(__name__)
+app.config['SERVER_NAME'] = 'chickenvision:8000'
+
+# render main page template
+@app.route('/')
+def index():
+    return render_template('index.html')
+# render mjpeg camera stream
+
+def getBytes():
+    while True:
+        try:
+            frameBytes = queue.get()
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frameBytes + b'\r\n\r\n')
+        except KeyboardInterrupt:
+            break
                 
 # GET/POST JSON STORAGE
 @app.route('/pageData.json', methods = ['GET', 'POST'])
@@ -173,7 +147,6 @@ def getPageData():
         settings.write(data)
         settings.close()
         return "good"
-
 @app.route('/settings.json', methods = ['GET', 'POST'])
 def getSettings():
     if request.method == 'GET':
@@ -184,56 +157,41 @@ def getSettings():
         settings.write(data)
         settings.close()
         return "good"
-
 # GET VIDEO FEED STUFF
-# reads json file for available cams
-# (need to add this functionality to settings json)
-# returns available camera indeces
 @app.route('/available_feeds')
 def available_feeds():
-    
-    data = json.loads({"data": []})
+    data = json.dumps({"data": [camera.getAvailableCameraIndexes()]})
     return data
-
 @app.route('/video_feed')
 def video_feed():
-    lastFrame = None
-    while True:
-        if lastFrame != latestFrame:
-            lastFrame = latestFrame
-            return Response(runCameras(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(getBytes(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
     
 # GET HTML TEMPLATES
 @app.route('/cameraSettings.json')
 def cameraSettingsTemplate():
     html = open('templates/settings/cameraSettings.html', 'r')
     return json.dumps({"data": html.read()})    
-
 @app.route('/pipelineSettings.json')
 def pipelineSettingsTemplate():
     html = open('templates/settings/pipelineSettings.html', 'r')
     return json.dumps({"data": html.read()})
-
 @app.route('/apriltag2Settings.json')
 def apriltag2SettingsTemplate():
     html = open('templates/settings/pipelineSettings/apriltag2.html', 'r')
     return json.dumps({"data": html.read()})
-
 @app.route('/apriltag3Settings.json')
 def apriltag3SettingsTemplate():
     html = open('templates/settings/pipelineSettings/apriltag3.html', 'r')
     return json.dumps({"data": html.read()})
-
 @app.route('/gamePieceGeoSettings.json')
 def gamePieceGeoSettingsTemplate():
     html = open('templates/settings/pipelineSettings/gamePieceGeo.html', 'r')
     return json.dumps({"data": html.read()})
-
 @app.route('/gamePieceMLSettings.json')
 def gamePieceMLSettingsTemplate():
     html = open('templates/settings/pipelineSettings/gamePieceML.html', 'r')
     return json.dumps({"data": html.read()})
-
 @app.route('/retroReflectiveSettings.json')
 def retroReflectiveSettingsTemplate():
     html = open('templates/settings/pipelineSettings/retroReflective.html', 'r')
@@ -243,7 +201,11 @@ def retroReflectiveSettingsTemplate():
 def settingsTemplate():
     html = open('templates/settings/settings.html', 'r')
     return json.dumps({"data": html.read()})
-    
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=8000)
-    runCameras()
+
+start()
+
+# if __name__ == '__main__':
+#     threading.Thread(target=start, daemon=True).start()
+#     threading.Thread(target=runCameras, daemon=True).start()
+#     while(True):
+#         pass
