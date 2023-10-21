@@ -1,5 +1,10 @@
 {
-   "currentCamera": 0,
+   "availableCams": [
+      0,
+      2,
+      4
+   ],
+   "currentCamera": 2,
    "currentSettingsPage": 1,
    "currentPipelineDropdowns": [
       false,

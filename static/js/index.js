@@ -2,11 +2,14 @@ const switchCamSettings = document.getElementById('cameraSettings');
 const switchPipeSettings = document.getElementById('pipelineSettings');
 const switchSettings = document.getElementById('settings')
 const settingsContainer = document.getElementById('settingsContainer');
+const currentCameraLabel = document.getElementById("currentCameraLabel")
 
 // Setup upon Loading
 async function loadCurrentPage() {
     let pageDataJSON = await getPageDataJSON()
     let pageIndex = pageDataJSON["currentSettingsPage"]
+    const currentCameraLabel = document.getElementById("currentCameraLabel");
+    currentCameraLabel.innerHTML = "cam" + pageDataJSON["currentCamera"].toString()
     switchSettingsPage(pageIndex)
 }
 async function switchSettingsPage(index) {
@@ -132,13 +135,43 @@ async function updateCameraSettings() {
 }
 
 async function loadCurrentCamera() {
+    console.log("loadCurrentCameras")
+    const cameraSelectorDropdown = document.getElementById("cameraSelectorDropdown")
 
+    if (cameraSelectorDropdown.innerHTML == "") {
+        let pageDataJSON = await getPageDataJSON()
+        let dataArray = await pageDataJSON["availableCams"];
+        console.log(dataArray)
+        let dropdownHTML = "";
+        for (let index in dataArray) {
+            console.log(dataArray[index])
+            let id = "cam" + dataArray[index.toString()];
+            let html = '<button id="' + id + '">' + id + '</button>'
+            console.log(html)
+            dropdownHTML += html;
+        }
+        console.log(dropdownHTML)
+        cameraSelectorDropdown.innerHTML = dropdownHTML;
+        console.log(cameraSelectorDropdown.innerHTML)
+        setCurrentCamera(dataArray)
+    }
+    else {
+        console.log("yo")
+        cameraSelectorDropdown.innerHTML = "";
+    }
 }
-function setCurrentCamera() {
-    
+function setCurrentCamera(availableCams) {
+    for (let camIndex in availableCams) {
+        const cameraHTML = document.getElementById("cam" + availableCams[camIndex].toString());
+        cameraHTML.addEventListener('click', async function() {await updateCurrentCamera(availableCams[camIndex])});
+    }
 }
-async function updateCurrentCamera() {
-
+async function updateCurrentCamera(camIndex) {
+    const currentCameraLabel = document.getElementById("currentCameraLabel");
+    currentCameraLabel.innerHTML = "cam" + camIndex.toString()
+    let pageData = await getPageDataJSON()
+    pageData["currentCamera"] = camIndex;
+    updatePageDataJSON(pageData);
 }
 
 // Pipeline Settings
@@ -207,10 +240,10 @@ async function loadApriltag2Settings() {
     const apriltag2Content = document.getElementById("apriltag2Content");
 
     if (apriltag2Content.innerHTML == "") {
-        let data = await fetch("apriltag2Settings.json")
+        let data = await fetch("apriltag2Settings.json");
         let dataJSON = await data.json();
         let dataHTML = await dataJSON["data"];
-        apriltag2Content.innerHTML = dataHTML;
+        apriltag2Content.innerHTML = await dataHTML;
 
         let pageDataJSON = await getPageDataJSON();
         let settingsJSON = await getSettingsJSON();
@@ -676,6 +709,7 @@ async function updateSettingsJSON(settingsJSON) {
 
 loadCurrentPage()
 
+currentCameraLabel.addEventListener('click', async function() {await loadCurrentCamera()})
 switchCamSettings.addEventListener('click', function() {switchSettingsPage(0)});
 switchPipeSettings.addEventListener('click', function() {switchSettingsPage(1)});
 switchSettings.addEventListener('click', function() {switchSettingsPage(2)});

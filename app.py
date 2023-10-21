@@ -18,21 +18,25 @@ def start():
     app.run(host='0.0.0.0', debug=False, port=8000)
     
 def runCameras():
-    # availableCams = cameraClass.getAvailableCameraIndexes()
-    availableCams = [0]
+    availableCams = camera.getAvailableCameraIndexes()
+    print(availableCams)
+    # availableCams = [0, 2]
     cams = []
     # print(availableCams)
     for cam in availableCams:
         cams.append([cam, Camera(cam)])
-        apriltag2Detector = ApriltagDetector2D()
-        apriltag3Detector = ApriltagDetector3D()
-        cubeDetector = CubeDetector()
-        coneDetector = ConeDetector()
-        objDetector = GamePieceDetectionML()
+    
+    print(cams)        
+
+    apriltag2Detector = ApriltagDetector2D()
+    apriltag3Detector = ApriltagDetector3D()
+    cubeDetector = CubeDetector()
+    coneDetector = ConeDetector()
+    objDetector = GamePieceDetectionML()
     while True:
         # print("yo")
         pageDataJSON = open("pageData.json", "r")
-        currentViewedCam = json.loads(pageDataJSON.read())["currentCamera"]
+        currentViewedCam = int(json.loads(pageDataJSON.read())["currentCamera"])
         pageDataJSON.close()
         
         cameraSettingsJSON = open("settings.json", "r")
@@ -42,11 +46,11 @@ def runCameras():
         for cam in cams:
             try:
                 # print(-1)
+                # print(cam)
                 cam[1].getCalibrationInfo()
                 apriltag3Detector.setCamParams(cam[1].params)
                 frame = cam[1].getLatestFrame()
                 labeledFrame = frame
-                
                 cameraSettingsDict = cameraSettings["cam" + str(cam[0])]
                 # print(0)
                 if cameraSettingsDict["pipelineSettings"]["toggles"][0]:
@@ -107,12 +111,15 @@ def runCameras():
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 # print(5)
+                # print(cam)
                 if cam[0] == currentViewedCam:
                     frameBytes = cam[1].convertFrameToBytes(labeledFrame)
+                    cam[1].renderCameraStream(labeledFrame)
+                    # print("bro")
                     queue.put(frameBytes)
                     # print(frameBytes)
 
-            except KeyboardInterrupt:
+            except:
                 break
 
 thread1 = threading.Thread(target=runCameras)
@@ -160,7 +167,8 @@ def getSettings():
 # GET VIDEO FEED STUFF
 @app.route('/available_feeds')
 def available_feeds():
-    data = json.dumps({"data": [camera.getAvailableCameraIndexes()]})
+    data = json.dumps({"data": camera.getAvailableCameraIndexes()})
+    print(data)
     return data
 @app.route('/video_feed')
 def video_feed():
