@@ -134,6 +134,7 @@ async function updateCameraSettings() {
     updateSettingsJSON(settingsJSON)
 }
 
+// Camera Selector
 async function loadCurrentCamera() {
     console.log("loadCurrentCameras")
     const cameraSelectorDropdown = document.getElementById("cameraSelectorDropdown")

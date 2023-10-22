@@ -12,7 +12,19 @@ import threading
 import os
 from queue import Queue
 
+# TODO make it store the available camera indeces in a global variable
+# TODO add Network Tables Support
+# TODO fix apriltag3d error when there are no available Camera Parameters, and also change settings to disable apriltag3 if true
+# TODO when adding default settings when there are no available settings use the values from settingsTemplate.json
+# TODO use the queues to make it so that the cameras only update their settings when the settings are actually changed
+# TODO clean up the HTML template code to not be retarded -->
+# TODO also in addition refactor this change in static/js/index.js
+# TODO make the css for the button that switches the viewed camera not so shitty
+# TODO make the css overall less shitty
+
 queue = Queue()
+settingsUpdated = Queue()
+pageDataUpdate = Queue()
 
 def startServer():
     app.run(host='0.0.0.0', debug=False, port=8000)
@@ -261,12 +273,8 @@ def getSettings():
         settings.write(data)
         settings.close()
         return "good"
-# GET VIDEO FEED STUFF
-@app.route('/available_feeds')
-def available_feeds():
-    data = json.dumps({"data": camera.getAvailableCameraIndexes()})
-    print(data)
-    return data
+    
+# SHOWS SELECTED VIDEO FEED
 @app.route('/video_feed')
 def video_feed():
     return Response(getBytes(),
@@ -277,40 +285,41 @@ def video_feed():
 def cameraSettingsTemplate():
     html = open('templates/settings/cameraSettings.html', 'r')
     return json.dumps({"data": html.read()})    
+
 @app.route('/pipelineSettings.json')
 def pipelineSettingsTemplate():
     html = open('templates/settings/pipelineSettings.html', 'r')
     return json.dumps({"data": html.read()})
+
 @app.route('/apriltag2Settings.json')
 def apriltag2SettingsTemplate():
     html = open('templates/settings/pipelineSettings/apriltag2.html', 'r')
     return json.dumps({"data": html.read()})
+
 @app.route('/apriltag3Settings.json')
 def apriltag3SettingsTemplate():
     html = open('templates/settings/pipelineSettings/apriltag3.html', 'r')
     return json.dumps({"data": html.read()})
+
 @app.route('/gamePieceGeoSettings.json')
 def gamePieceGeoSettingsTemplate():
     html = open('templates/settings/pipelineSettings/gamePieceGeo.html', 'r')
     return json.dumps({"data": html.read()})
+
 @app.route('/gamePieceMLSettings.json')
 def gamePieceMLSettingsTemplate():
     html = open('templates/settings/pipelineSettings/gamePieceML.html', 'r')
     return json.dumps({"data": html.read()})
+
 @app.route('/retroReflectiveSettings.json')
 def retroReflectiveSettingsTemplate():
     html = open('templates/settings/pipelineSettings/retroReflective.html', 'r')
     return json.dumps({"data": html.read()})
-    
+
 @app.route('/settings.json')
 def settingsTemplate():
     html = open('templates/settings/settings.html', 'r')
     return json.dumps({"data": html.read()})
 
+# start flask webserver
 startServer()
-
-# if __name__ == '__main__':
-#     threading.Thread(target=start, daemon=True).start()
-#     threading.Thread(target=runCameras, daemon=True).start()
-#     while(True):
-#         pass
