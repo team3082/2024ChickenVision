@@ -9,27 +9,32 @@ import json
 import cv2
 import numpy as np
 import threading
-import os
 from queue import Queue
+from networktables import NetworkTables
 
-# TODO make it store the available camera indeces in a global variable
-# TODO add Network Tables Support
-# TODO fix apriltag3d error when there are no available Camera Parameters, and also change settings to disable apriltag3 if true
-# TODO when adding default settings when there are no available settings use the values from settingsTemplate.json
-# TODO use the queues to make it so that the cameras only update their settings when the settings are actually changed
-# TODO clean up the HTML template code to not be retarded -->
-# TODO also in addition refactor this change in static/js/index.js
-# TODO make the css for the button that switches the viewed camera not so shitty
-# TODO make the css overall less shitty
+# setup getting general settings
+generalSettings = open("generalSettings.json", "r")
+generalSettingsDict = json.loads(generalSettings.read())
+generalSettings.close()
 
+# setting general settings
+teamNumber = generalSettingsDict["teamNumber"]
+webAddress = generalSettingsDict["webAddress"]
+port = generalSettingsDict["port"]
+
+# starting data queues for inter-thread data management
 queue = Queue()
 settingsUpdated = Queue()
 pageDataUpdate = Queue()
 
+# network tables configuration
+NetworkTables.initialize(server='roborio-' + str(teamNumber) + '-frc.local')
+nt = NetworkTables.getTable('ChickenVision')
+
 def startServer():
     app.run(host='0.0.0.0', debug=False, port=8000)
     
-def startCameras():
+def startCameras(nt):
     availableCams = cam.getAvailableCameraIndexes()
     threads = []
     for camIndex in availableCams:
@@ -39,7 +44,7 @@ def startCameras():
     for thread in threads:
         thread.start()
 
-def runCamera(camIndex):
+def runCamera(camIndex, nt):
     camera = Camera(camIndex)
     apriltag2Detector = ApriltagDetector2D()
     apriltag3Detector = ApriltagDetector3D()
@@ -60,87 +65,10 @@ def runCamera(camIndex):
         try:
             cameraSettings = settings["cam" + str(camIndex)]
         except:
-            defaultSettings = {
-                            "cameraSettings": {
-                               "connectVerbose": "1",
-                               "brightness": "50",
-                               "contrast": "50",
-                               "saturation": "50",
-                               "hue": "50",
-                               "gamma": "120",
-                               "sharpness": "50",
-                               "autoExposure": true
-                            },
-                            "pipelineSettings": {
-                               "toggles": [
-                                  False,
-                                  False,
-                                  False,
-                                  False,
-                                  False
-                               ],
-                               "apriltag2D": {
-                                  "family": "1",
-                                  "nthreads": "2",
-                                  "quadDecimate": 0.2,
-                                  "quadBlur": 0,
-                                  "refineEdges": True,
-                                  "refineDecode": False,
-                                  "refinePose": False,
-                                  "quadContours": False,
-                                  "decisionMargin": "5"
-                               },
-                               "apriltag3D": {
-                                  "family": "1",
-                                  "nthreads": "4",
-                                  "quadDecimate": 0.2,
-                                  "quadBlur": 0.3,
-                                  "refineEdges": True,
-                                  "refineDecode": False,
-                                  "refinePose": False,
-                                  "quadContours": False,
-                                  "decisionMargin": "22",
-                                  "fov": "70"
-                               },
-                               "gamePieceGeo": {
-                                  "lowerPurple": [
-                                     "67",
-                                     "47",
-                                     "23"
-                                  ],
-                                  "upperPurple": [
-                                     "183",
-                                     "250",
-                                     "252"
-                                  ],
-                                  "arbituaryValueCube": "8",
-                                  "lowerYellow": [
-                                     "0",
-                                     "109",
-                                     "100"
-                                  ],
-                                  "upperYellow": [
-                                     "140",
-                                     "146",
-                                     "221"
-                                  ],
-                                  "arbituaryValueCone": "10"
-                               },
-                               "gamePieceML": {},
-                               "retroreflective": {
-                                  "lowerGreen": [
-                                     0,
-                                     0,
-                                     0
-                                  ],
-                                  "upperGreen": [
-                                     0,
-                                     0,
-                                     0
-                                  ],
-                                  "lightOn": True
-                               }
-                            }}
+            settingsTemplate = open("settingsTemplate.json", "r")
+            defaultSettings = json.loads(settingsTemplate.read())
+            settingsTemplate.close()
+            
             settingsJSON = open("settings.json", "w")
             settings = json.loads(settingsJSON.read())
             settings["cam" + str(camIndex)] = defaultSettings
@@ -229,21 +157,26 @@ def runCamera(camIndex):
                 frameBytes = camera.convertFrameToBytes(labeledFrame)
                 # camera.renderCameraStream(labeledFrame)
                 queue.put(frameBytes)
+                
+            # NetworkTables
+            
 
         except:
-            break
-        
+            break        
+
+# starting cameras
 startCameras()
 
+# flask configuration
 app = Flask(__name__)
-app.config['SERVER_NAME'] = 'chickenvision:8000'
+app.config['SERVER_NAME'] = + webAddress + ':' + str(port)
 
 # render main page template
 @app.route('/')
 def index():
     return render_template('index.html')
-# render mjpeg camera stream
 
+# render mjpeg camera stream
 def getBytes():
     while True:
         try:
@@ -263,6 +196,7 @@ def getPageData():
         settings.write(data)
         settings.close()
         return "good"
+    
 @app.route('/settings.json', methods = ['GET', 'POST'])
 def getSettings():
     if request.method == 'GET':
@@ -280,6 +214,7 @@ def video_feed():
     return Response(getBytes(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
+# TODO make these not retarded
 # GET HTML TEMPLATES
 @app.route('/cameraSettings.json')
 def cameraSettingsTemplate():
