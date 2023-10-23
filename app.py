@@ -77,8 +77,12 @@ def runCamera(camIndex, nt):
             
         cameraSettings = settings["cam" + str(camIndex)]
         try:
-            camera.getCalibrationInfo()
-            apriltag3Detector.setCamParams(camera.params)
+            try:
+                camera.getCalibrationInfo()
+                apriltag3Detector.setCamParams(camera.params)
+            except:
+                # will add some stuff to generate a templated calib file here
+                pass
             frame = camera.getLatestFrame()
             labeledFrame = frame
             
@@ -103,26 +107,30 @@ def runCamera(camIndex, nt):
                 # running the detector
                 labeledFrame = apriltag2Detector.update(labeledFrame, frame)
             
-            # checking if apriltag3D is enabled
-            if cameraSettings["pipelineSettings"]["toggles"][1]:
-                # gettings and updating the latest options
-                # TODO only update settings when they are actually changed in order to increase performance
-                optionsDict = cameraSettings["pipelineSettings"]["apriltag3D"]
-                options = DetectorOptions(
-                    families="tag16h5",
-                    nthreads=int(optionsDict["nthreads"]),
-                    quad_decimate=optionsDict["quadDecimate"],
-                    quad_blur=optionsDict["quadBlur"],
-                    refine_edges=optionsDict["refineEdges"],
-                    refine_decode=optionsDict["refineDecode"],
-                    refine_pose=optionsDict["refinePose"],
-                    quad_contours=optionsDict["quadContours"]
-                    )
-                apriltag3Detector.updateOptions(options)
-                apriltag3Detector.updateDecisionMargin(float(optionsDict["decisionMargin"]))
-                
-                # running the detector
-                labeledFrame = apriltag3Detector.update(labeledFrame, frame)
+            # TODO get rid of this when it I add the automatically generating calib file
+            try: 
+                # checking if apriltag3D is enabled
+                if cameraSettings["pipelineSettings"]["toggles"][1]:
+                    # gettings and updating the latest options
+                    # TODO only update settings when they are actually changed in order to increase performance
+                    optionsDict = cameraSettings["pipelineSettings"]["apriltag3D"]
+                    options = DetectorOptions(
+                        families="tag16h5",
+                        nthreads=int(optionsDict["nthreads"]),
+                        quad_decimate=optionsDict["quadDecimate"],
+                        quad_blur=optionsDict["quadBlur"],
+                        refine_edges=optionsDict["refineEdges"],
+                        refine_decode=optionsDict["refineDecode"],
+                        refine_pose=optionsDict["refinePose"],
+                        quad_contours=optionsDict["quadContours"]
+                        )
+                    apriltag3Detector.updateOptions(options)
+                    apriltag3Detector.updateDecisionMargin(float(optionsDict["decisionMargin"]))
+                    
+                    # running the detector
+                    labeledFrame = apriltag3Detector.update(labeledFrame, frame)
+            except:
+                pass
             
             # checking if Game Piece Detection Geometry is enabled
             if cameraSettings["pipelineSettings"]["toggles"][2]:
