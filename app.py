@@ -34,7 +34,7 @@ pageDataUpdate = Queue()
 def startServer():
     app.run(host='0.0.0.0', debug=False, port=8000)
     
-def startCameras(nt):
+def startCameras():
     availableCams = cam.getAvailableCameraIndexes()
     threads = []
     for camIndex in availableCams:
