@@ -179,9 +179,19 @@ startCameras()
 app = Flask(__name__)
 # app.config['SERVER_NAME'] = + webAddress + ':' + str(port)
 
-# render main page template
+# render main page template                   
 @app.route('/')
 def index():
+    # TODO make json file retain extended formatting
+    if not request.args.get('camera') == None:
+        pageStream = open("pageData.json", "r")
+        data = json.loads(pageStream.read())
+        data["currentCamera"] = request.args.get('camera')
+        pageStreamW = open("pageData.json", "w")
+        pageStreamW.write(json.dumps(data))
+        pageStream.close()
+        pageStreamW.close()
+
     return render_template('index.html')
 
 # render mjpeg camera stream
