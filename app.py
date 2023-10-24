@@ -4,7 +4,7 @@ import camera as cam
 from detectors.apriltagDetection import ApriltagDetector3D, ApriltagDetector2D
 from detectors.gamePieceDetection import ConeDetector, CubeDetector
 from detectors.gamePieceDetectionML import GamePieceDetectionML
-from apriltagLocal.python.apriltag import DetectorOptions
+from apriltag import DetectorOptions
 import json
 import cv2
 import numpy as np

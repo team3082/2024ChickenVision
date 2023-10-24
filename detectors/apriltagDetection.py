@@ -1,4 +1,4 @@
-import apriltagLocal.python.apriltag as apriltag
+import apriltag as apriltag
 import cv2 as cv2
 import detectors.apriltagSolver as solver
 import json
