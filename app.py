@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import threading
 from queue import Queue
-from networktables import NetworkTables
+# from networktables import NetworkTables
 
 # setup getting general settings
 generalSettings = open("generalSettings.json", "r")
@@ -28,8 +28,8 @@ settingsUpdated = Queue()
 pageDataUpdate = Queue()
 
 # network tables configuration
-NetworkTables.initialize(server='roborio-' + str(teamNumber) + '-frc.local')
-nt = NetworkTables.getTable('ChickenVision')
+# NetworkTables.initialize(server='roborio-' + str(teamNumber) + '-frc.local')
+# nt = NetworkTables.getTable('ChickenVision')
 
 def startServer():
     app.run(host='0.0.0.0', debug=False, port=8000)
