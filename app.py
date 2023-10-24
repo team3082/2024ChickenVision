@@ -37,13 +37,24 @@ def startServer():
 def startCameras():
     availableCams = cam.getAvailableCameraIndexes()
     threads = []
+    # Commented out code is to get available cameras and update settings but has been disabled for testing reasons
+    # availableCamsFromSettings = []
+    # pageStream = open("pageData.json", "r")
+    # data = json.loads(pageStream.read())
+
     for camIndex in availableCams:
+     #    availableCamsFromSettings.append(camIndex)
         thread = threading.Thread(target=runCamera, args=(camIndex, ))
         threads.append(thread)
     
     for thread in threads:
         thread.start()
 
+   #  data["availableCams"] = availableCamsFromSettings;
+    # pageStreamW = open("pageData.json", "w")
+    # pageStreamW.write(json.dumps(data))
+    # pageStream.close()
+    # pageStreamW.close()
 def runCamera(camIndex):
     camera = Camera(camIndex)
     apriltag2Detector = ApriltagDetector2D()
@@ -51,7 +62,6 @@ def runCamera(camIndex):
     cubeDetector = CubeDetector()
     coneDetector = ConeDetector()
     objDetector = GamePieceDetectionML()
-    
     while True:
         pageDataJSON = open("pageData.json", "r")
         currentViewedCam = int(json.loads(pageDataJSON.read())["currentCamera"])
