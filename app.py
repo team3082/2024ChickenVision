@@ -18,9 +18,9 @@ generalSettingsDict = json.loads(generalSettings.read())
 generalSettings.close()
 
 # setting general settings
-teamNumber = generalSettingsDict["teamNumber"]
-webAddress = generalSettingsDict["webAddress"]
-port = generalSettingsDict["port"]
+# teamNumber = generalSettingsDict["teamNumber"]
+# webAddress = generalSettingsDict["webAddress"]
+# port = generalSettingsDict["port"]
 
 # starting data queues for inter-thread data management
 queue = Queue()
@@ -44,7 +44,7 @@ def startCameras():
     for thread in threads:
         thread.start()
 
-def runCamera(camIndex, nt):
+def runCamera(camIndex):
     camera = Camera(camIndex)
     apriltag2Detector = ApriltagDetector2D()
     apriltag3Detector = ApriltagDetector3D()
@@ -177,7 +177,7 @@ startCameras()
 
 # flask configuration
 app = Flask(__name__)
-app.config['SERVER_NAME'] = + webAddress + ':' + str(port)
+# app.config['SERVER_NAME'] = + webAddress + ':' + str(port)
 
 # render main page template
 @app.route('/')
