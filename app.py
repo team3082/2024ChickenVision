@@ -10,6 +10,28 @@ import cv2
 import numpy as np
 import threading
 from queue import Queue
+import sys
+
+# Signal handler for keyboard interrupt
+import signal
+
+# Important flag to stop all threads gracefully on keyboard interrupt
+stop_event = threading.Event()
+
+def signal_catcher(signalID, frame):
+    global flag_stopThreads
+    activeThreads = threading.enumerate()
+    print("\nKeyboard interrupt cought, stopping all " + str(len(activeThreads)) + "threads...")
+    for thread in activeThreads:
+        if thread != threading.current_thread():
+            stop_event.set()
+            thread.join()
+            print("Stopped thread: " + str(thread.name))
+    sys.exit(0)
+
+# Register signal handler
+signal.signal(signal.SIGINT, signal_catcher)
+
 # from networktables import NetworkTables
 
 # setup getting general settings
@@ -38,13 +60,13 @@ def startCameras():
     availableCams = cam.getAvailableCameraIndexes()
     threads = []
     for camIndex in availableCams:
-        thread = threading.Thread(target=runCamera, args=(camIndex, ))
+        thread = threading.Thread(target=runCamera, args=(stop_event, camIndex, ))
         threads.append(thread)
     
     for thread in threads:
         thread.start()
 
-def runCamera(camIndex):
+def runCamera(stop_event, camIndex):
     camera = Camera(camIndex)
     apriltag2Detector = ApriltagDetector2D()
     apriltag3Detector = ApriltagDetector3D()
@@ -52,7 +74,8 @@ def runCamera(camIndex):
     coneDetector = ConeDetector()
     objDetector = GamePieceDetectionML()
     
-    while True:
+    # FLAG: the 'stop_event' is a flag and will have the same effect as the 'while true' however it allows the thread to be teminated apart from the program
+    while not stop_event.is_set():
         pageDataJSON = open("pageData.json", "r")
         currentViewedCam = int(json.loads(pageDataJSON.read())["currentCamera"])
         pageDataJSON.close()
