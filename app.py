@@ -116,6 +116,7 @@ def runCamera(camIndex):
                 
                 # running the detector
                 labeledFrame = apriltag2Detector.update(labeledFrame, frame)
+                apriltag2Data = apriltag2Detector.returnPose()
             
             # TODO get rid of this when it I add the automatically generating calib file
             try: 
@@ -139,6 +140,14 @@ def runCamera(camIndex):
                     
                     # running the detector
                     labeledFrame = apriltag3Detector.update(labeledFrame, frame)
+                    apriltag3Data = apriltag3Detector.returnTags3D()
+                    for i, data in enumerate(apriltag3Data):
+                        id = data["id"]
+                        nt.putString("detection-" + str(i) + "id", id)
+                        decisionMargin = data["decisionMargin"]
+                        nt.putNumber("detection-" + str(i) + "decision-margin", decisionMargin)
+                        pose = data["pose"]
+                        nt.putNumberArray("detection-" + str(i) + "pose", pose)
             except:
                 pass
             
@@ -159,6 +168,8 @@ def runCamera(camIndex):
                 # running the detectors
                 labeledFrame = cubeDetector.update(labeledFrame, frame)
                 labeledFrame = coneDetector.update(labeledFrame, frame)
+                cubeData = cubeDetector.returnCubeData()
+                coneData = coneDetector.returnCodeData()
 
     
             # checking if Game Piece Detection Machine Learning is enabled
