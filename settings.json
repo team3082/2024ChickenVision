@@ -81,6 +81,88 @@
          }
       }
    },
+   "cam1": {
+      "cameraSettings": {
+         "connectVerbose": "1",
+         "brightness": "50",
+         "contrast": "50",
+         "saturation": "50",
+         "hue": "50",
+         "gamma": "120",
+         "sharpness": "50",
+         "autoExposure": true
+      },
+      "pipelineSettings": {
+         "toggles": [
+            false,
+            false,
+            false,
+            false,
+            false
+         ],
+         "apriltag2D": {
+            "family": "1",
+            "nthreads": "1",
+            "quadDecimate": 0.2,
+            "quadBlur": 0,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": "50"
+         },
+         "apriltag3D": {
+            "family": "1",
+            "nthreads": "1",
+            "quadDecimate": 3.8,
+            "quadBlur": 0.8,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": "50",
+            "fov": "70"
+         },
+         "gamePieceGeo": {
+            "lowerPurple": [
+               110,
+               150,
+               150
+            ],
+            "upperPurple": [
+               160,
+               270,
+               270
+            ],
+            "arbituaryValueCube": 0.09,
+            "lowerYellow": [
+               110,
+               150,
+               150
+            ],
+            "upperYellow": [
+               160,
+               270,
+               270
+            ],
+            "arbituaryValueCone": 0.09
+         },
+         "gamePieceML": {},
+         "retroreflective": {
+            "lowerGreen": [
+               0,
+               0,
+               0
+            ],
+            "upperGreen": [
+               0,
+               0,
+               0
+            ],
+            "lightOn": true
+         }
+      }
+   },
    "cam2": {
       "cameraSettings": {
          "connectVerbose": "1",
@@ -94,7 +176,89 @@
       },
       "pipelineSettings": {
          "toggles": [
-            true,
+            false,
+            false,
+            false,
+            false,
+            false
+         ],
+         "apriltag2D": {
+            "family": "1",
+            "nthreads": "1",
+            "quadDecimate": 0.2,
+            "quadBlur": 0,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": "50"
+         },
+         "apriltag3D": {
+            "family": "1",
+            "nthreads": "1",
+            "quadDecimate": 3.8,
+            "quadBlur": 0.8,
+            "refineEdges": true,
+            "refineDecode": false,
+            "refinePose": false,
+            "quadContours": false,
+            "decisionMargin": "50",
+            "fov": "70"
+         },
+         "gamePieceGeo": {
+            "lowerPurple": [
+               110,
+               150,
+               150
+            ],
+            "upperPurple": [
+               160,
+               270,
+               270
+            ],
+            "arbituaryValueCube": 0.09,
+            "lowerYellow": [
+               110,
+               150,
+               150
+            ],
+            "upperYellow": [
+               160,
+               270,
+               270
+            ],
+            "arbituaryValueCone": 0.09
+         },
+         "gamePieceML": {},
+         "retroreflective": {
+            "lowerGreen": [
+               0,
+               0,
+               0
+            ],
+            "upperGreen": [
+               0,
+               0,
+               0
+            ],
+            "lightOn": true
+         }
+      }
+   },
+   "cam3": {
+      "cameraSettings": {
+         "connectVerbose": "1",
+         "brightness": "50",
+         "contrast": "50",
+         "saturation": "50",
+         "hue": "50",
+         "gamma": "120",
+         "sharpness": "50",
+         "autoExposure": true
+      },
+      "pipelineSettings": {
+         "toggles": [
+            false,
             false,
             false,
             false,
@@ -176,8 +340,8 @@
       },
       "pipelineSettings": {
          "toggles": [
-            true,
-            true,
+            false,
+            false,
             false,
             false,
             false
