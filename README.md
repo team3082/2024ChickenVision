@@ -8,6 +8,7 @@
 * flask
 * numpy
 * opencv-contrib-python
+* pynetworktables
 * [apriltag](https://github.com/swatbotics/apriltag)
 
 > [!IMPORTANT]
